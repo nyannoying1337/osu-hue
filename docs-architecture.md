@@ -1,0 +1,96 @@
+# osu!hue
+
+Native WPF app for Windows x64. Reads the current osu!standard beatmap and
+clock from local tosu v2 and streams combo-coloured pulses to a Hue
+Entertainment area. Initial target: osu! stable.
+
+The companion remains a separate program. UI, Hue device control and effects
+live here; the optional tosu contribution exports generic beatmap data only.
+Released tosu versions continue to work through the existing raw-file fallback.
+
+## UI
+
+`App.xaml` defines shared dark control templates, spacing, colour resources
+and visible keyboard-focus adorners. `MainWindow.xaml` has one page scroll
+region and a persistent tempo/start/stop toolbar. `MainWindow.Layout.cs`
+switches between two columns and one column below 940 device-independent
+pixels, without moving controls out of their namescope or rebuilding them.
+The minimum supported window width is 640 device-independent pixels.
+Connection, streaming and parsing logic stay outside the layout partial.
+
+## Build
+
+Requires the .NET 10 SDK on Windows.
+
+```powershell
+dotnet run --project OsuHue.Tests -c Release
+dotnet publish OsuHue/OsuHue.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish
+```
+
+Tests use a local in-process HTTP/WebSocket server. They do not contact or
+control any Hue hardware and do not start osu! or tosu. Test credentials
+are protected/unprotected in memory only.
+
+## Design
+
+- `Beatmap.cs`: osu! parsing, combo indices and pulse envelope. Palette
+  indexing starts at Combo2. Map offsets apply to beatmap palettes; skin
+  palettes use the plain combo index. Spinners do not consume colours.
+- `TosuClient.cs`: fragmented WebSocket reception, reconnect, HTTP map/skin
+  loading, stale-map rejection, retry and palette selection. Prefers the
+  proposed `/api/v2/beatmap/timeline`; a 404 falls back to the existing
+  raw-map endpoint. Only loopback
+  HTTP endpoints are accepted.
+- `SyncEngine.cs`: 50 Hz render/send loop, 500 ms stale-data cutoff,
+  bounded clock extrapolation, pause/menu handling and idempotent disposal.
+- `DemoSequence.cs`: deterministic 90/120/180/240/300 BPM cycle (8 seconds
+  per stage) or fixed tempo. Connected demos drive the same Hue transport
+  as gameplay; unpaired demos explicitly stay on screen. Both stop actions
+  release the session and restore the saved lamp state. No osu!/tosu is required.
+- `HueSession.cs`: pairing, Entertainment areas, pre-stream light snapshot,
+  DTLS through HueApi.Entertainment and restoration on stop. Local Hue
+  certificate handling is scoped to the bridge's HTTP client.
+- `Settings.cs`: per-user settings and DPAPI-protected credentials.
+- `AppLog.cs`: bounded local error log without credential-bearing exception
+  messages. Unreadable settings show a warning; numeric effects and the local
+  URL are validated on load. Settings save atomically through a unique file.
+- `TosuInstaller.cs`: optional official tosu download, pinned SHA-256,
+  extraction and explicit launch. tosu is not bundled in this source.
+
+## Verification limits
+
+Automated tests cover game data and lifecycle. Real Bridge DTLS startup,
+demo streaming and successful stop/restoration responses were checked on
+Windows. Physical colour and timing have not been measured. lazer
+skin retrieval, precoloured textures and Argon's custom visual rules are
+not implemented. No audio analysis, slider ticks/repeats or spinner effects.
+
+Lifecycle tests inject `IHueSession` to exercise startup failures, transport
+failures, concurrent close, and ownership without physical lights. Map/skin
+options are captured atomically. Switching maps cancels the previous request;
+both the proposed timeline and the raw-file fallback reject stale checksums.
+Disconnect and dispose serialize against reconnect, and the render loop runs
+off the WPF dispatcher. Closing still stops the stream if settings cannot save.
+
+## Dependencies and protocol references
+
+- HueApi.Entertainment / HueApi.ColorConverters / HueApi 3.3.0, MIT:
+  https://github.com/michielpost/Q42.HueApi
+- Portable.BouncyCastle 1.9.0, Bouncy Castle licence (MIT style).
+- .NET/WPF 10.0.13, MIT and third-party notices.
+- tosu API: https://github.com/tosuapp/tosu/wiki
+- osu! combo behaviour and tests:
+  https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Osu/Objects/OsuHitObject.cs
+  https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Osu.Tests/TestSceneLegacyBeatmapSkin.cs
+
+The app has no telemetry. Hue discovery and the optional tosu download
+use internet access; gameplay data and Hue control stay local.
+
+## Branding
+
+Display name: `osu!hue`, an independent community tool. The heading uses
+plain text; no osu! cookie logo is included, recreated, modified or animated.
+The app icon is an independent ring-and-dot mark. The animated circle is a
+gameplay preview, not a logo. Existing executable/config identifiers retain
+`OsuHue` for compatibility. Reviewed against:
+https://osu.ppy.sh/wiki/en/Brand_identity_guidelines

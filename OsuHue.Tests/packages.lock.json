@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0-windows7.0": {
+      "HueApi": {
+        "type": "Transitive",
+        "resolved": "3.3.0",
+        "contentHash": "gEDZuribcK6QIjN8BVCNq3zs/3qXkQClz7m4C+fcwm4lHg8H0QZZ+BZGGqtqls67D8bUrJ8/aZ9O2mICRvWpgw=="
+      },
+      "HueApi.ColorConverters": {
+        "type": "Transitive",
+        "resolved": "3.3.0",
+        "contentHash": "fz2LFMHnya+ePwFjJu/fp1lOwgSy68VgjC+Fi5bXH2fpZwInXFEVQIeHC7LSSXAFezKNX3hrubEM4W4tsrh9og==",
+        "dependencies": {
+          "HueApi": "3.3.0"
+        }
+      },
+      "HueApi.Entertainment": {
+        "type": "Transitive",
+        "resolved": "3.3.0",
+        "contentHash": "VV4qrZ3v/EvGOMW+/FwiAT9wxZ4HpzWJ79VtZW44JxfTi8VK4rVBgRtQfZLDbWJJGhQg8edVyme8ENA7JmMWVw==",
+        "dependencies": {
+          "HueApi.ColorConverters": "3.3.0",
+          "Portable.BouncyCastle": "1.9.0"
+        }
+      },
+      "Portable.BouncyCastle": {
+        "type": "Transitive",
+        "resolved": "1.9.0",
+        "contentHash": "eZZBCABzVOek+id9Xy04HhmgykF0wZg9wpByzrWN7q8qEI0Qen9b7tfd7w8VA3dOeesumMG7C5ZPy0jk7PSRHw=="
+      },
+      "osuhue": {
+        "type": "Project",
+        "dependencies": {
+          "HueApi.Entertainment": "[3.3.0, )"
+        }
+      }
+    }
+  }
+}

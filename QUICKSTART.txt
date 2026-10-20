@@ -1,0 +1,32 @@
+osu!hue 0.3.0 — Windows x64 preview
+
+Extract the complete ZIP and run OsuHue.exe. No separate .NET installation
+is required. This is an independent community tool.
+
+1. Enter your own Hue Bridge IP address and click IP pruefen (IP prüfen).
+2. Press the physical Bridge button, click Koppeln, then select an
+   Entertainment area created in the official Hue app.
+3. Click Licht-Demo to test your lights without osu! or tosu.
+4. For gameplay, open osu! stable and start normal released tosu. The app's
+   download button can fetch the official release. Click Licht-Sync starten
+   after the preview has recognised your map.
+
+PATCHED TOSU IS NOT REQUIRED.
+The app falls back to the normal beatmap-file endpoint when the proposed
+timeline endpoint is unavailable (HTTP 404).
+
+Demo-Tempo: fixed 90/120/180/240/300 BPM or an automatic eight-second cycle.
+Brightness and fade controls work in both the demo and gameplay.
+Demo beenden / Licht-Sync stoppen release the lights and restore the saved
+state. Normal close does too. Network/power failures may prevent restoration.
+
+Each person pairs their own Bridge. Credentials are stored locally with
+Windows DPAPI protection; no keys or settings are bundled in this ZIP.
+
+Target: osu! stable / osu!standard. No audio analysis, spinner effects,
+slider ticks/repeats or verified lazer/Argon support.
+
+Source, issues and build instructions:
+https://github.com/nyannoying1337/osu-hue
+
+Dependency notices are included in THIRD-PARTY-NOTICES.

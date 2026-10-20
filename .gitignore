@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+artifacts/
+work/
+*.user
+*.suo
+*.log
+settings.json
+*.env
+*.tmp
+*.pfx
+*.key
+TestResults/
