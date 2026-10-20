@@ -10,6 +10,7 @@
     <Version>0.3.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <NuGetLockFilePath Condition="'$(RuntimeIdentifier)' != '' Or '$(PublishSingleFile)' == 'true'">$(MSBuildProjectDirectory)/obj/packages.publish.lock.json</NuGetLockFilePath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HueApi.Entertainment" Version="3.3.0" />
