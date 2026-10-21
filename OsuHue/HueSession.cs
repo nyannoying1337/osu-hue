@@ -1,5 +1,4 @@
 using HueApi.ColorConverters;
-using HueApi.Entertainment;
 using HueApi.Entertainment.Models;
 using System.Net;
 using System.Net.Http;
@@ -14,12 +13,12 @@ public sealed record HueArea(Guid Id, string Name, int Channels)
     public override string ToString() => UiText.Translate($"{Name} · {Channels} Lichtkanäle");
 }
 
-public sealed record HueBridgeInfo(string Ip, string Name, string Model);
+public sealed record HueBridgeInfo(string Ip, string Name, string Model, string BridgeId = "");
 
 public sealed class HueSession : IHueSession
 {
     private readonly HttpClient rest;
-    private readonly StreamingHueClient client;
+    private readonly HueStreamingTransport client;
     private readonly Guid areaId;
     private StreamingGroup? group;
     private EntertainmentLayer? layer;
@@ -29,11 +28,11 @@ public sealed class HueSession : IHueSession
     private readonly object disposeGate = new();
     public int ChannelCount => layer?.Count ?? 0;
 
-    public HueSession(string ip, string appKey, string clientKey, Guid area)
+    public HueSession(string ip, string appKey, string clientKey, Guid area, string bridgeId)
     {
         ValidateIp(ip);
-        rest = Rest(ip, appKey);
-        client = new StreamingHueClient(ip, appKey, clientKey);
+        rest = Rest(ip, appKey, bridgeId);
+        client = new HueStreamingTransport(ip, appKey, clientKey, area);
         areaId = area;
     }
 
@@ -46,16 +45,11 @@ public sealed class HueSession : IHueSession
             throw new ArgumentException("Die Bridge muss eine lokale Netzwerkadresse haben.");
     }
 
-    private static HttpClient Rest(string ip, string? key = null)
+    private static HttpClient Rest(string ip, string? key = null, string? bridgeId = null)
     {
-        ValidateIp(ip);
-        // Hue bridges use local/self-signed certificates. This exception is scoped
-        // to this single bridge client; internet requests keep normal validation.
-        var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator, UseProxy = false, AllowAutoRedirect = false };
-        var http = new HttpClient(handler) { BaseAddress = new Uri($"https://{ip}/"), Timeout = TimeSpan.FromSeconds(6) };
-        if (key is not null)
-            http.DefaultRequestHeaders.Add("hue-application-key", key);
-        return http;
+        if (key is not null && string.IsNullOrEmpty(bridgeId))
+            throw new InvalidOperationException("Verify the Bridge identity before using stored credentials.");
+        return new HueCertificateValidator(bridgeId).CreateClient(ip, key);
     }
 
     public static async Task<string[]> DiscoverAsync()
@@ -70,9 +64,11 @@ public sealed class HueSession : IHueSession
     {
         try
         {
-            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-            var json = await http.GetFromJsonAsync<JsonElement>("https://discovery.meethue.com/");
-            return json.EnumerateArray().Select(x => x.GetProperty("internalipaddress").GetString() ?? "").Where(x => x.Length > 0).ToArray();
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5), MaxResponseContentBufferSize = 2 * 1024 * 1024 };
+            using var response = await http.GetAsync("https://discovery.meethue.com/");
+            response.EnsureSuccessStatusCode();
+            using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return json.RootElement.EnumerateArray().Select(x => x.GetProperty("internalipaddress").GetString() ?? "").Where(x => x.Length > 0).ToArray();
         }
         catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or JsonException) { return []; }
     }
@@ -101,16 +97,24 @@ public sealed class HueSession : IHueSession
 
     public static async Task<HueBridgeInfo> ProbeAsync(string ip)
     {
-        using var http = Rest(ip);
+        var identity = new HueCertificateValidator();
+        using var http = identity.CreateClient(ip, null);
         using var response = await http.GetAsync("api/config");
         response.EnsureSuccessStatusCode();
         using var config = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-        return ParseBridgeInfo(ip, config.RootElement);
+        var bridge = ParseBridgeInfo(ip, config.RootElement);
+        if (!config.RootElement.TryGetProperty("bridgeid", out var id) ||
+            !string.Equals(id.GetString(), identity.VerifiedId, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("The Bridge identity does not match its certificate.");
+        return bridge with
+        {
+            BridgeId = identity.VerifiedId!
+        };
     }
 
-    public static async Task<(string AppKey, string ClientKey)> PairAsync(string ip)
+    public static async Task<(string AppKey, string ClientKey)> PairAsync(string ip, string bridgeId)
     {
-        using var http = Rest(ip);
+        using var http = Rest(ip, bridgeId: bridgeId);
         using var response = await http.PostAsJsonAsync("api", new
         {
             devicetype = "OsuHue#Windows",
@@ -129,9 +133,9 @@ public sealed class HueSession : IHueSession
             result?["success"]?["clientkey"]?.GetValue<string>() ?? throw new InvalidOperationException("Kein Streaming-Schlüssel erhalten."));
     }
 
-    public static async Task<HueArea[]> GetAreasAsync(string ip, string key)
+    public static async Task<HueArea[]> GetAreasAsync(string ip, string key, string bridgeId)
     {
-        using var http = Rest(ip, key);
+        using var http = Rest(ip, key, bridgeId);
         var data = await GetData(http, "entertainment_configuration");
         return data.Select(x => new HueArea(Guid.Parse(x!["id"]!.GetValue<string>()), x["metadata"]?["name"]?.GetValue<string>() ?? "Entertainment-Bereich", x["channels"]?.AsArray().Count ?? 0)).ToArray();
     }
@@ -169,18 +173,15 @@ public sealed class HueSession : IHueSession
         group = new StreamingGroup(channels);
         layer = group.GetNewLayer(isBaseLayer: true);
         await SnapshotAsync(area);
-        activated = true; // Also clean up if REST activation succeeds but DTLS fails.
-        var connect = Task.Run(() => client.ConnectAsync(areaId));
+        await PutAsync($"entertainment_configuration/{areaId}", new
+        {
+            action = "start"
+        });
+        activated = true;
+        var connect = Task.Run(client.ConnectAsync);
         try
         {
             await connect.WaitAsync(TimeSpan.FromSeconds(12));
-        }
-        catch (HueEntertainmentException)
-        {
-            // HueApi 3.3.0 uses this exception when REST activation is rejected.
-            // Do not stop a stream another application acquired in the meantime.
-            activated = false;
-            throw;
         }
         catch
         {
@@ -224,7 +225,7 @@ public sealed class HueSession : IHueSession
             light.State.SetRGBColor(colour);
             light.State.SetBrightness(pulse.Brightness);
         }
-        client.ManualUpdate(group);
+        client.Send(group);
     }
 
     public ValueTask DisposeAsync()

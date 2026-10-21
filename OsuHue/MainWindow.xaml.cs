@@ -162,8 +162,9 @@ public partial class MainWindow : Window
         var ip = BridgeIp.Text.Trim();
         var bridge = await HueSession.ProbeAsync(ip);
         BridgeStatus.Text = UiText.Translate($"{bridge.Name} erreichbar · Kopplung läuft …");
-        var credentials = await HueSession.PairAsync(ip);
+        var credentials = await HueSession.PairAsync(ip, bridge.BridgeId);
         settings.BridgeIp = pairedIp = ip;
+        settings.BridgeId = bridge.BridgeId;
         settings.SetCredentials(credentials.AppKey, credentials.ClientKey);
         settings.Save();
         BridgeStatus.Text = UiText.Translate("Bridge gekoppelt · Schlüssel lokal geschützt");
@@ -177,7 +178,13 @@ public partial class MainWindow : Window
         var credentials = settings.GetCredentials() ?? throw new InvalidOperationException("Bitte zuerst die Bridge koppeln.");
         if (BridgeIp.Text.Trim() != pairedIp)
             throw new InvalidOperationException("Die Bridge-IP wurde geändert. Bitte diese Bridge zuerst koppeln.");
-        var areas = await HueSession.GetAreasAsync(pairedIp, credentials.AppKey);
+        if (settings.BridgeId.Length == 0)
+        {
+            var bridge = await HueSession.ProbeAsync(pairedIp);
+            settings.BridgeId = bridge.BridgeId;
+            settings.Save();
+        }
+        var areas = await HueSession.GetAreasAsync(pairedIp, credentials.AppKey, settings.BridgeId);
         AreaBox.ItemsSource = areas;
         AreaBox.SelectedItem = areas.FirstOrDefault(x => x.Id.ToString() == settings.AreaId) ?? areas.FirstOrDefault();
         BridgeStatus.Text = UiText.Translate(areas.Length > 0 ? $"Bridge bereit · {areas.Length} Entertainment-Bereich(e)" : "Gekoppelt · noch kein Entertainment-Bereich");
@@ -224,7 +231,7 @@ public partial class MainWindow : Window
             throw new InvalidOperationException("Wähle einen Entertainment-Bereich. Falls keiner vorhanden ist, erstelle ihn in der Hue App.");
         settings.AreaId = area.Id.ToString();
         settings.Save();
-        return new HueSession(pairedIp, credentials.AppKey, credentials.ClientKey, area.Id);
+        return new HueSession(pairedIp, credentials.AppKey, credentials.ClientKey, area.Id, settings.BridgeId);
     }
 
     private async void Demo_Click(object sender, RoutedEventArgs e) => await Run(async () =>

@@ -62,13 +62,17 @@ dotnet run --project OsuHue.Tests/OsuHue.Tests.csproj -c Release --no-restore
 
 The publish script produces a self-contained Windows x64 app in `artifacts/windows`, including dependency notices and the quick-start guide. GitHub Actions runs the regression suite and publishes a build artifact on pushes and pull requests.
 
-The 151 automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
+The 165 automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
 
-See [the architecture notes](docs-architecture.md) for parsing, timing, lifecycle and UI details.
+See [the security notes](SECURITY.md) for trust boundaries and remaining risks, and [the architecture notes](docs-architecture.md) for parsing, timing, lifecycle and UI details.
 
 ## Local data and dependencies
 
 Settings live in `%LOCALAPPDATA%\OsuHue\settings.json`. Bridge credentials are protected for the current Windows user with DPAPI; each person pairs their own Bridge. Settings and credentials are not included in downloads or this repository.
+
+Use a trusted home network. Hue's DTLS 1.2 handshake exposes the app key as its
+PSK identity to someone able to capture that LAN traffic; encrypted light packets
+do not remove that protocol limitation. See [security boundaries](SECURITY.md).
 
 Gameplay data comes from loopback HTTP/WebSocket connections. Bridge control stays on the local network. Discovery and the optional official tosu download use internet access. There is no telemetry.
 

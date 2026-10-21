@@ -1036,5 +1036,47 @@
     "en": "Invalid or excessively large slider in Taiko conversion.",
     "de": "Ungültiger oder zu großer Slider bei der Taiko-Konvertierung.",
     "nested": false
+  },
+  {
+    "key": "Security.VerifyBridgeIdentity",
+    "en": "Verify the Bridge identity before using stored credentials.",
+    "de": "Prüfe die Identität der Bridge, bevor gespeicherte Schlüssel verwendet werden.",
+    "nested": false
+  },
+  {
+    "key": "Security.BridgeCertificateMismatch",
+    "en": "The Bridge identity does not match its certificate.",
+    "de": "Die Identität der Bridge stimmt nicht mit ihrem Zertifikat überein.",
+    "nested": false
+  },
+  {
+    "key": "Security.SkinSize",
+    "en": "The selected skin.ini exceeds the 256 KiB limit.",
+    "de": "Die ausgewählte skin.ini überschreitet das Limit von 256 KiB.",
+    "nested": false
+  },
+  {
+    "key": "Security.DownloadSize",
+    "en": "Unexpected tosu download size.",
+    "de": "Unerwartete Größe des tosu-Downloads.",
+    "nested": false
+  },
+  {
+    "key": "Security.DownloadLimit",
+    "en": "The tosu download exceeds its size limit.",
+    "de": "Der tosu-Download überschreitet das Größenlimit.",
+    "nested": false
+  },
+  {
+    "key": "Security.ArchiveLimit",
+    "en": "The tosu archive exceeds its size limit.",
+    "de": "Das tosu-Archiv überschreitet das Größenlimit.",
+    "nested": false
+  },
+  {
+    "key": "Security.ExecutableHash",
+    "en": "The extracted tosu executable failed verification.",
+    "de": "Die entpackte tosu-Programmdatei hat die Prüfung nicht bestanden.",
+    "nested": false
   }
 ]

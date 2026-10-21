@@ -32,7 +32,7 @@ public sealed class TosuClient : IAsyncDisposable
     private string status = "tosu noch nicht verbunden";
     private string? mapError;
     private long lastMapAttempt;
-    private readonly HttpClient http = new(new HttpClientHandler { UseProxy = false, AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(4) };
+    private readonly HttpClient http = new(new HttpClientHandler { UseProxy = false, AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(4), MaxResponseContentBufferSize = 16 * 1024 * 1024 };
     private CancellationTokenSource? lifetime;
     private Task? worker;
     private sealed record PaletteOptions(string File, string Mode, int Generation);
@@ -229,7 +229,11 @@ public sealed class TosuClient : IAsyncDisposable
             if (requested.Mode is 0 or 2)
             {
                 if (!string.IsNullOrWhiteSpace(file))
+                {
+                    if (new FileInfo(file).Length > 256 * 1024)
+                        throw new IOException("The selected skin.ini exceeds the 256 KiB limit.");
                     skinText = await File.ReadAllTextAsync(file, cancel);
+                }
                 else if (!requested.Client.Equals("lazer", StringComparison.OrdinalIgnoreCase))
                 {
                     try

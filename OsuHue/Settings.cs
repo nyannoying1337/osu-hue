@@ -8,6 +8,7 @@ namespace OsuHue;
 public sealed class Settings
 {
     public string Language { get; set; } = "en";
+    public string BridgeId { get; set; } = "";
     public string BridgeIp { get; set; } = "";
     public string ProtectedCredentials { get; set; } = "";
     public string AreaId { get; set; } = "";
@@ -50,6 +51,7 @@ public sealed class Settings
     {
         Language = Language == "de" ? "de" : "en";
         BridgeIp ??= "";
+        BridgeId ??= "";
         ProtectedCredentials ??= "";
         AreaId ??= "";
         SkinFile ??= "";

@@ -48,22 +48,31 @@ are protected/unprotected in memory only.
   as gameplay; unpaired demos explicitly stay on screen. Both stop actions
   release the session and restore the saved lamp state. No osu!/tosu is required.
 - `HueSession.cs`: pairing, Entertainment areas, pre-stream light snapshot,
-  DTLS through HueApi.Entertainment and restoration on stop. Local Hue
-  certificate handling is scoped to the bridge's HTTP client.
+  certificate-validated HTTPS activation and restoration on stop.
+  `HueCertificateValidator.cs` verifies a chain to the bundled Hue roots,
+  certificate validity/server purpose and the paired Bridge ID. DHCP address
+  mismatch is expected because Hue certificates name the Bridge ID.
+  `HueStreamingTransport.cs` uses Bouncy Castle DTLS 1.2 PSK with
+  AES-128-GCM-SHA256. It deliberately avoids the SDK streaming client's
+  certificate-bypassing REST path; SDK layer/colour conversion remains in use.
 - `Settings.cs`: per-user settings and DPAPI-protected credentials.
 - `AppLog.cs`: bounded local error log without credential-bearing exception
   messages. Unreadable settings show a warning; numeric effects and the local
   URL are validated on load. Settings save atomically through a unique file.
 - `TosuInstaller.cs`: optional official tosu download, pinned SHA-256,
-  extraction and explicit launch. tosu is not bundled in this source.
+  archive and executable verification (including cached installs), bounded
+  download/extraction sizes and explicit launch with automatic updates disabled.
+  tosu is not bundled in this source.
 
 ## Verification limits
 
 Automated tests cover game data and lifecycle. Real Bridge DTLS startup,
 demo streaming and successful stop/restoration responses were checked on
 Windows. Physical colour and timing have not been measured. lazer
-skin retrieval, precoloured textures and Argon's custom visual rules are
-not implemented. No audio analysis, slider ticks/repeats or spinner effects.
+skin retrieval and precoloured textures are
+not implemented for arbitrary custom textures. Built-in Argon palettes and
+Mania accents are supported. No audio analysis or spinner effects; standard
+slider ticks/repeats are omitted, while Taiko converts short sliders into hits.
 
 Lifecycle tests inject `IHueSession` to exercise startup failures, transport
 failures, concurrent close, and ownership without physical lights. Map/skin
@@ -90,7 +99,7 @@ use internet access; gameplay data and Hue control stay local.
 
 Display name: `osu!hue`, an independent community tool. The heading uses
 plain text; no osu! cookie logo is included, recreated, modified or animated.
-The app icon is an independent ring-and-dot mark. The animated circle is a
+The app icon is an independent ribbon-shaped h mark. The animated circle is a
 gameplay preview, not a logo. Existing executable/config identifiers retain
 `OsuHue` for compatibility. Reviewed against:
 https://osu.ppy.sh/wiki/en/Brand_identity_guidelines

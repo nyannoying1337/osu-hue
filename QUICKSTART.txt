@@ -1,4 +1,4 @@
-osu!hue 0.4.1 — Windows x64 preview
+osu!hue 0.4.2 — Windows x64 preview
 
 Extract the complete ZIP and run OsuHue.exe. No separate .NET installation
 is required. This is an independent community tool.
@@ -38,3 +38,5 @@ Source, issues and build instructions:
 https://github.com/nyannoying1337/osu-hue
 
 Dependency notices are included in THIRD-PARTY-NOTICES.
+
+Security: use a trusted LAN. Hue's DTLS handshake exposes the app key as its PSK identity to someone able to capture the network traffic. See SECURITY.md in the source repository.

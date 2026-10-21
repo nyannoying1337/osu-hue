@@ -73,7 +73,7 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
             {
                 var parts = line.Split(',');
                 if (parts.Length >= 5 && double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double time)
-                    && double.IsFinite(time) && int.TryParse(parts[3], out int type))
+                    && double.IsFinite(time) && int.TryParse(parts[3], out int type) && type is >= 0 and <= 255)
                 {
                     rawObjects.Add((time, type));
                     records.Add(parts);
@@ -138,7 +138,7 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
 
     private static HitCue[] BuildCues(List<(double time, int type)> rawObjects, List<double> breaks, int version)
     {
-        if (rawObjects.Any(x => !double.IsFinite(x.time)) || breaks.Any(x => !double.IsFinite(x)) || version <= 0)
+        if (rawObjects.Any(x => !double.IsFinite(x.time) || x.type is < 0 or > 255) || breaks.Any(x => !double.IsFinite(x)) || version <= 0)
             throw new FormatException("Die Beatmap enthält ungültige Zeit- oder Versionsangaben.");
         var cues = new List<HitCue>();
         // osu! starts at palette index 1 (Combo2), not index 0 (Combo1).

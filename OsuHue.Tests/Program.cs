@@ -48,6 +48,25 @@ if (args is ["--inspect-taiko", var mapPath])
     return;
 }
 
+if (args is ["--probe-stream"])
+{
+    var streamSettings = Settings.Load();
+    var credentials = streamSettings.GetCredentials() ?? throw new InvalidOperationException("No stored pairing.");
+    var bridge = await HueSession.ProbeAsync(streamSettings.BridgeIp);
+    if (streamSettings.BridgeId.Length > 0 && !streamSettings.BridgeId.Equals(bridge.BridgeId, StringComparison.OrdinalIgnoreCase))
+        throw new InvalidOperationException("Bridge identity changed.");
+    await using var session = new HueSession(streamSettings.BridgeIp, credentials.AppKey, credentials.ClientKey,
+        Guid.Parse(streamSettings.AreaId), bridge.BridgeId);
+    await session.StartAsync();
+    for (int i = 0; i < 50; i++)
+    {
+        session.Send(new Pulse(new Rgb(40, 140, 200), .1, 0));
+        await Task.Delay(20);
+    }
+    Console.WriteLine("Verified HTTPS activation and encrypted DTLS send passed; restoring lights.");
+    return;
+}
+
 var checks = new List<string>();
 void Check(bool condition, string name)
 {
@@ -68,6 +87,8 @@ void Throws(Action action, string name)
     catch (InvalidOperationException) { threw = true; }
     Check(threw, name);
 }
+
+await SecurityChecks.RunAsync(Check);
 
 UiText.SetLanguage("en");
 Check(UiText.Translate("Licht-Sync starten") == "Start light sync", "English action label");
@@ -448,6 +469,14 @@ await WaitFor(() => engine.Current.Status.StartsWith("Map nicht lesbar"), "map e
 Check(engine.Current.Title != "Warte auf eine Beatmap", "failed loading retains the current frame's map title");
 Volatile.Write(ref stateJson, FrameJson(1500, false, 2, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
 await WaitFor(() => engine.Current.Playing, "returning from unsupported conversion recovers Taiko");
+Volatile.Write(ref serveTimeline, false);
+Volatile.Write(ref mapResponse, new string('x', 17 * 1024 * 1024));
+Volatile.Write(ref stateJson, FrameJson(1500, false, 2, "oversized-response"));
+await WaitFor(() => engine.Tosu.MapError is not null, "oversized HTTP response is rejected before beatmap parsing");
+Check(engine.Tosu.Loaded is null && engine.Current.Pulse.Brightness == 0, "oversized response cannot retain or drive an old map");
+Volatile.Write(ref mapResponse, sample);
+Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "recovery-after-size-limit"));
+await WaitFor(() => engine.Current.Playing, "normal map loading recovers after the response size limit");
 await Task.WhenAll(engine.Tosu.ConnectAsync(url), engine.Tosu.ConnectAsync(url));
 await WaitFor(() => engine.Current.Playing, "concurrent reconnects retain one healthy connection");
 await engine.DisposeAsync();
