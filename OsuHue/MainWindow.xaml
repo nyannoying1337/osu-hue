@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="OsuHue.MainWindow" Title="osu!hue 0.4.0 · Beatmap → Licht" Width="1100" Height="900" MinWidth="640" MinHeight="640" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Style="{StaticResource WindowTheme}">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="OsuHue.MainWindow" Title="{DynamicResource Ui.OsuHue040BeatmapLight}" Width="1100" Height="900" MinWidth="640" MinHeight="640" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Style="{StaticResource WindowTheme}">
     <Grid x:Name="RootLayout" Margin="24" Background="{StaticResource Canvas}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,16 +13,23 @@
             </Grid.ColumnDefinitions>
             <StackPanel Margin="0,0,20,0">
                 <StackPanel Orientation="Horizontal">
+                    <Image Source="Assets/brand-mark.png" Width="44" Height="44" Margin="0,0,12,0" AutomationProperties.Name="osu!hue"/>
                     <TextBlock Text="osu!" FontSize="30" FontWeight="Bold" Foreground="#FF78A8"/>
                     <TextBlock Text="hue" FontSize="30" FontWeight="Light"/>
                 </StackPanel>
-                <TextBlock Text="Unabhängiges Community-Tool für osu! und Philips Hue." Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
+                <TextBlock Text="{DynamicResource Ui.IndependentCommunityToolForOsuAndPhilipsHue}" Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
             </StackPanel>
-            <Border Grid.Column="1" Background="#253020" CornerRadius="6" Padding="10,7" VerticalAlignment="Center">
-                <TextBlock x:Name="StreamBadge" Text="VORSCHAU" Foreground="{StaticResource Accent}" FontSize="11" FontWeight="SemiBold"/>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Width="160">
+                <ComboBox x:Name="LanguageChoice" SelectedValuePath="Tag" SelectionChanged="Language_Changed" AutomationProperties.Name="Language / Sprache" Margin="0,0,0,10">
+                    <ComboBoxItem Content="English" Tag="en"/>
+                    <ComboBoxItem Content="Deutsch" Tag="de"/>
+                </ComboBox>
+            <Border Background="#253020" CornerRadius="6" Padding="10,7" VerticalAlignment="Center">
+                <TextBlock x:Name="StreamBadge" Text="{DynamicResource Ui.Preview}" Foreground="{StaticResource Accent}" FontSize="11" FontWeight="SemiBold"/>
             </Border>
+            </StackPanel>
         </Grid>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,12,0" Focusable="False" AutomationProperties.Name="Einrichtung und Lichtvorschau">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,12,0" Focusable="False" AutomationProperties.Name="{DynamicResource Ui.SetupAndLightPreview}">
             <Grid x:Name="MainLayout">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="340"/>
@@ -41,59 +48,70 @@
                                 <TextBlock Text="01" Style="{StaticResource SectionNumber}"/>
                                 <TextBlock Text="Hue Bridge" FontSize="18" FontWeight="SemiBold"/>
                             </StackPanel>
-                            <TextBlock Text="IP-Adresse" Margin="0,0,0,6"/>
+                            <TextBlock Text="{DynamicResource Ui.IpAddress}" Margin="0,0,0,6"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="BridgeIp" TextChanged="BridgeIp_TextChanged" AutomationProperties.Name="IP-Adresse der Hue Bridge" AutomationProperties.HelpText="Die lokale IP-Adresse findest du in der Hue App unter Einstellungen und Bridges."/>
-                                <Button x:Name="DiscoverButton" Grid.Column="1" Content="Suchen" Margin="8,0,0,0" Click="Discover_Click"/>
+                                <TextBox x:Name="BridgeIp" TextChanged="BridgeIp_TextChanged" AutomationProperties.Name="{DynamicResource Ui.HueBridgeIpAddress}" AutomationProperties.HelpText="{DynamicResource Ui.FindTheLocalIpInTheHueApp}"/>
+                                <Button x:Name="DiscoverButton" Grid.Column="1" Content="{DynamicResource Ui.Search}" Margin="8,0,0,0" Click="Discover_Click"/>
                             </Grid>
                             <Grid Margin="0,10,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="PairButton" Content="Koppeln" Click="Pair_Click"/>
-                                <TextBlock Grid.Column="1" Text="Vorher den Knopf auf der Bridge drücken." Style="{StaticResource MutedText}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <Button x:Name="PairButton" Content="{DynamicResource Ui.Pair}" Click="Pair_Click"/>
+                                <TextBlock Grid.Column="1" Text="{DynamicResource Ui.PressTheButtonOnTheBridgeFirst}" Style="{StaticResource MutedText}" Margin="12,0,0,0" VerticalAlignment="Center"/>
                             </Grid>
-                            <TextBlock x:Name="BridgeStatus" Text="Noch nicht gekoppelt" Style="{StaticResource MutedText}" Margin="0,10,0,0"/>
-                            <TextBlock Text="Entertainment-Bereich" Margin="0,16,0,6"/>
+                            <TextBlock x:Name="BridgeStatus" Text="{DynamicResource Ui.NotPairedYet}" Style="{StaticResource MutedText}" Margin="0,10,0,0"/>
+                            <TextBlock Text="{DynamicResource Ui.EntertainmentArea}" Margin="0,16,0,6"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="AreaBox" AutomationProperties.Name="Entertainment-Bereich"/>
-                                <Button x:Name="RefreshAreasButton" Grid.Column="1" Content="↻" Click="RefreshAreas_Click" Margin="8,0,0,0" ToolTip="Bereiche neu laden" AutomationProperties.Name="Entertainment-Bereiche neu laden"/>
+                                <ComboBox x:Name="AreaBox" AutomationProperties.Name="{DynamicResource Ui.EntertainmentArea}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <TextBlock Text=" · "/>
+                                                <TextBlock Text="{Binding Channels}"/>
+                                                <TextBlock Text="{DynamicResource Ui.LightChannels}" Margin="4,0,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button x:Name="RefreshAreasButton" Grid.Column="1" Content="↻" Click="RefreshAreas_Click" Margin="8,0,0,0" ToolTip="{DynamicResource Ui.ReloadAreas}" AutomationProperties.Name="{DynamicResource Ui.ReloadEntertainmentAreas}"/>
                             </Grid>
-                            <TextBlock Text="Fehlt ein Bereich? Erstelle ihn in der Hue App unter Entertainment-Bereiche." Style="{StaticResource MutedText}" Margin="0,8,0,0"/>
+                            <TextBlock Text="{DynamicResource Ui.MissingAnAreaCreateOneUnderEntertainmentAreas}" Style="{StaticResource MutedText}" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <TextBlock Text="02" Style="{StaticResource SectionNumber}"/>
-                                <TextBlock Text="osu! verbinden" FontSize="18" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Ui.ConnectOsu}" FontSize="18" FontWeight="SemiBold"/>
                             </StackPanel>
-                            <TextBlock Text="tosu liefert Map und Spielzeit aus osu! stable oder lazer. Die Licht-Demo funktioniert auch ohne Spiel." Style="{StaticResource MutedText}" Margin="0,0,0,12"/>
-                            <Button x:Name="InstallButton" Content="tosu herunterladen &amp; starten" Click="Install_Click"/>
-                            <TextBlock x:Name="TosuStatus" Text="Warte auf tosu …" Style="{StaticResource MutedText}" Margin="0,10,0,0"/>
-                            <Expander Header="Verbindung und Skin" Foreground="{StaticResource Text}" Margin="0,16,0,0">
+                            <TextBlock Text="{DynamicResource Ui.TosuReadsTheMapAndPlaybackTimeFrom}" Style="{StaticResource MutedText}" Margin="0,0,0,12"/>
+                            <Button x:Name="InstallButton" Content="{DynamicResource Ui.DownloadAndStartTosu}" Click="Install_Click"/>
+                            <TextBlock x:Name="TosuStatus" Text="{DynamicResource Ui.WaitingForTosu}" Style="{StaticResource MutedText}" Margin="0,10,0,0"/>
+                            <Expander Header="{DynamicResource Ui.ConnectionAndSkin}" Foreground="{StaticResource Text}" Margin="0,16,0,0">
                                 <StackPanel Margin="0,12,0,0">
-                                    <TextBlock Text="Lokale tosu-Adresse" Margin="0,0,0,6"/>
-                                    <TextBox x:Name="TosuUrl" AutomationProperties.Name="Lokale tosu-Adresse"/>
-                                    <Button x:Name="ReconnectButton" Content="Neu verbinden" Click="Reconnect_Click" Margin="0,8,0,16" HorizontalAlignment="Left"/>
-                                    <TextBlock Text="Farbquelle" Margin="0,0,0,6"/>
-                                    <ComboBox x:Name="ColourMode" SelectionChanged="Palette_Changed" AutomationProperties.Name="Farbquelle">
-                                        <ComboBoxItem Content="Automatisch"/>
-                                        <ComboBoxItem Content="Skin"/>
-                                        <ComboBoxItem Content="Beatmap"/>
+                                    <TextBlock Text="{DynamicResource Ui.LocalTosuAddress}" Margin="0,0,0,6"/>
+                                    <TextBox x:Name="TosuUrl" AutomationProperties.Name="{DynamicResource Ui.LocalTosuAddress}"/>
+                                    <Button x:Name="ReconnectButton" Content="{DynamicResource Ui.Reconnect}" Click="Reconnect_Click" Margin="0,8,0,16" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{DynamicResource Ui.ColourSource}" Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="ColourMode" SelectionChanged="Palette_Changed" AutomationProperties.Name="{DynamicResource Ui.ColourSource}">
+                                        <ComboBoxItem Content="{DynamicResource Ui.Automatic}" Tag="Automatisch"/>
+                                        <ComboBoxItem Content="Skin" Tag="Skin"/>
+                                        <ComboBoxItem Content="Beatmap" Tag="Beatmap"/>
                                     </ComboBox>
-                                    <Button x:Name="SkinFileButton" Content="Eigene skin.ini wählen …" Click="Skin_Click" Margin="0,10,0,0" HorizontalAlignment="Left"/>
-                                    <TextBlock x:Name="SkinLabel" Text="osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette." Style="{StaticResource MutedText}" Margin="0,8,0,0"/>
-                                    <Button x:Name="ClearSkinButton" Content="Skin-Auswahl zurücksetzen" Click="ClearSkin_Click" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+                                    <Button x:Name="SkinFileButton" Content="{DynamicResource Ui.ChooseASkinIni}" Click="Skin_Click" Margin="0,10,0,0" HorizontalAlignment="Left"/>
+                                    <TextBlock x:Name="SkinLabel" Text="{DynamicResource Ui.OsuCatchAutomaticSkinColoursManiaTaikoRuleset}" Style="{StaticResource MutedText}" Margin="0,8,0,0"/>
+                                    <Button x:Name="ClearSkinButton" Content="{DynamicResource Ui.ResetSkinSelection}" Click="ClearSkin_Click" HorizontalAlignment="Left" Margin="0,8,0,0"/>
                                 </StackPanel>
                             </Expander>
                         </StackPanel>
@@ -106,45 +124,45 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="LIVE-VORSCHAU" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="SemiBold"/>
-                            <TextBlock x:Name="ColourHex" Grid.Column="1" Text="BEREIT" Foreground="{StaticResource Muted}" FontSize="11"/>
+                            <TextBlock Text="{DynamicResource Ui.LivePreview}" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="ColourHex" Grid.Column="1" Text="{DynamicResource Ui.Ready}" Foreground="{StaticResource Muted}" FontSize="11"/>
                         </Grid>
                         <Viewbox Height="124" Margin="0,16">
-                            <Grid Width="180" Height="180" AutomationProperties.Name="Vorschau des Lichtimpulses">
+                            <Grid Width="180" Height="180" AutomationProperties.Name="{DynamicResource Ui.LightPulsePreview}">
                                 <Ellipse Stroke="#394356" StrokeThickness="2"/>
                                 <Ellipse x:Name="CircleRing" Margin="18" Stroke="#FF78A8" StrokeThickness="5"/>
                                 <Ellipse x:Name="CircleFill" Margin="27" Fill="#FF78A8" Opacity="0.2"/>
                                 <TextBlock x:Name="HitNumber" Text="—" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="38" FontWeight="Light"/>
                             </Grid>
                         </Viewbox>
-                        <TextBlock x:Name="MapTitle" Text="Warte auf eine Beatmap" FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxHeight="52"/>
-                        <TextBlock x:Name="PaletteSource" Text="Wähle eine Map in osu!" Style="{StaticResource MutedText}" Margin="0,5,0,0"/>
+                        <TextBlock x:Name="MapTitle" Text="{DynamicResource Ui.WaitingForABeatmap}" FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxHeight="52"/>
+                        <TextBlock x:Name="PaletteSource" Text="{DynamicResource Ui.SelectAMapInOsu}" Style="{StaticResource MutedText}" Margin="0,5,0,0"/>
                         <StackPanel x:Name="PaletteSwatches" Orientation="Horizontal" Margin="0,12,0,0"/>
-                        <TextBlock x:Name="PlayStatus" Text="Die Vorschau funktioniert ohne Bridge." Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
+                        <TextBlock x:Name="PlayStatus" Text="{DynamicResource Ui.ThePreviewWorksWithoutABridge}" Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
                     </StackPanel>
                 </Border>
                 <Border x:Name="EffectsPane" Grid.Row="1" Grid.Column="2" Style="{StaticResource Card}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <TextBlock Text="03" Style="{StaticResource SectionNumber}"/>
-                            <TextBlock Text="Licht abstimmen" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Text="{DynamicResource Ui.TuneTheLights}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                         <Grid>
-                            <TextBlock Text="Helligkeit"/>
+                            <TextBlock Text="{DynamicResource Ui.Brightness}"/>
                             <TextBlock x:Name="BrightnessValue" Text="45 %" HorizontalAlignment="Right" Foreground="{StaticResource Accent}"/>
                         </Grid>
-                        <Slider x:Name="BrightnessSlider" Value="45" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="Helligkeit in Prozent"/>
+                        <Slider x:Name="BrightnessSlider" Value="45" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="{DynamicResource Ui.BrightnessInPercent}"/>
                         <Grid Margin="0,6,0,0">
-                            <TextBlock Text="Nachleuchten"/>
+                            <TextBlock Text="{DynamicResource Ui.Afterglow}"/>
                             <TextBlock x:Name="FadeValue" Text="180 ms" HorizontalAlignment="Right" Foreground="{StaticResource Accent}"/>
                         </Grid>
-                        <Slider x:Name="FadeSlider" Value="180" Minimum="40" Maximum="600" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="Nachleuchten in Millisekunden"/>
+                        <Slider x:Name="FadeSlider" Value="180" Minimum="40" Maximum="600" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="{DynamicResource Ui.AfterglowInMilliseconds}"/>
                         <Grid Margin="0,6,0,0">
-                            <TextBlock Text="Licht vorziehen"/>
+                            <TextBlock Text="{DynamicResource Ui.AdvanceTheLights}"/>
                             <TextBlock x:Name="OffsetValue" Text="+60 ms" HorizontalAlignment="Right" Foreground="{StaticResource Accent}"/>
                         </Grid>
-                        <Slider x:Name="OffsetSlider" Value="60" Minimum="-300" Maximum="300" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="Licht vorziehen in Millisekunden"/>
-                        <TextBlock Text="Licht zu spät? Wert erhöhen. Mehr Nachleuchten macht schnelle Folgen weicher." Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
+                        <Slider x:Name="OffsetSlider" Value="60" Minimum="-300" Maximum="300" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="Effect_Changed" AutomationProperties.Name="{DynamicResource Ui.LightAdvanceInMilliseconds}"/>
+                        <TextBlock Text="{DynamicResource Ui.LightsLateIncreaseTheOffsetLongerAfterglowSoftens}" Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -162,20 +180,20 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel x:Name="TempoPane" Margin="0,0,16,0">
-                        <TextBlock Text="Demo-Tempo" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,6"/>
-                        <ComboBox x:Name="DemoTempo" SelectedIndex="0" SelectionChanged="DemoTempo_Changed" AutomationProperties.Name="Tempo der Licht-Demo">
-                            <ComboBoxItem Content="Automatisch · 90–300 BPM" Tag="0"/>
-                            <ComboBoxItem Content="90 BPM · langsam" Tag="90"/>
-                            <ComboBoxItem Content="120 BPM · mittel" Tag="120"/>
-                            <ComboBoxItem Content="180 BPM · schnell" Tag="180"/>
-                            <ComboBoxItem Content="240 BPM · sehr schnell" Tag="240"/>
-                            <ComboBoxItem Content="300 BPM · extrem schnell" Tag="300"/>
+                        <TextBlock Text="{DynamicResource Ui.DemoTempo}" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="DemoTempo" SelectedIndex="0" SelectionChanged="DemoTempo_Changed" AutomationProperties.Name="{DynamicResource Ui.LightDemoTempo}">
+                            <ComboBoxItem Content="{DynamicResource Ui.Automatic90300Bpm}" Tag="0"/>
+                            <ComboBoxItem Content="{DynamicResource Ui.90BpmSlow}" Tag="90"/>
+                            <ComboBoxItem Content="{DynamicResource Ui.120BpmMedium}" Tag="120"/>
+                            <ComboBoxItem Content="{DynamicResource Ui.180BpmFast}" Tag="180"/>
+                            <ComboBoxItem Content="{DynamicResource Ui.240BpmVeryFast}" Tag="240"/>
+                            <ComboBoxItem Content="{DynamicResource Ui.300BpmExtremelyFast}" Tag="300"/>
                         </ComboBox>
                     </StackPanel>
-                    <Button x:Name="StartButton" Grid.Column="1" Content="Licht-Sync starten" Background="{StaticResource Accent}" Foreground="#182217" FontWeight="SemiBold" MinWidth="190" Click="Start_Click" VerticalAlignment="Bottom" Margin="0,0,10,0"/>
-                    <Button x:Name="DemoButton" Grid.Column="2" Content="Licht-Demo" MinWidth="130" Click="Demo_Click" VerticalAlignment="Bottom"/>
+                    <Button x:Name="StartButton" Grid.Column="1" Content="{DynamicResource Ui.StartLightSync}" Background="{StaticResource Accent}" Foreground="#182217" FontWeight="SemiBold" MinWidth="190" Click="Start_Click" VerticalAlignment="Bottom" Margin="0,0,10,0"/>
+                    <Button x:Name="DemoButton" Grid.Column="2" Content="{DynamicResource Ui.LightDemo}" MinWidth="130" Click="Demo_Click" VerticalAlignment="Bottom"/>
                 </Grid>
-                <TextBlock x:Name="Notice" Text="Bridge koppeln → Bereich wählen → Licht-Demo testen." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite"/>
+                <TextBlock x:Name="Notice" Text="{DynamicResource Ui.PairBridgeSelectAreaTryTheLightDemo}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite"/>
             </StackPanel>
         </Border>
     </Grid>

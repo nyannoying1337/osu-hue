@@ -26,7 +26,9 @@ public partial class MainWindow : Window
         this.screenshot = screenshot;
         this.lifecycleTest = lifecycleTest;
         settings = screenshot || lifecycleTest ? new() : Settings.Load();
+        UiText.SetLanguage(settings.Language);
         InitializeComponent();
+        LanguageChoice.SelectedValue = settings.Language;
         BridgeIp.Text = settings.BridgeIp;
         pairedIp = settings.GetCredentials() is not null ? settings.BridgeIp : "";
         TosuUrl.Text = settings.TosuUrl;
@@ -39,11 +41,11 @@ public partial class MainWindow : Window
             "Beatmap" => 2,
             _ => 0
         };
-        SkinLabel.Text = settings.SkinFile.Length == 0 ? "osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette." : settings.SkinFile;
-        BridgeStatus.Text = pairedIp.Length > 0 ? "Kopplung gespeichert · Bereich wird geladen" : "Noch nicht gekoppelt";
+        SkinLabel.Text = settings.SkinFile.Length == 0 ? UiText.Translate("osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette.") : settings.SkinFile;
+        BridgeStatus.Text = UiText.Translate(pairedIp.Length > 0 ? "Kopplung gespeichert · Bereich wird geladen" : "Noch nicht gekoppelt");
         ready = true;
         if (settings.LoadWarning is string warning)
-            Notice.Text = warning;
+            Notice.Text = UiText.Translate(warning);
         UpdateEffects();
         UpdatePalette();
         refresh.Tick += (_, _) => RefreshPreview();
@@ -51,6 +53,29 @@ public partial class MainWindow : Window
         Loaded += Window_Loaded;
         if (!screenshot)
             Closing += Window_Closing;
+    }
+
+    private void Language_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        if (!ready || LanguageChoice.SelectedValue is not string language)
+            return;
+        settings.Language = language;
+        UiText.SetLanguage(language);
+        BridgeStatus.Text = UiText.Translate(BridgeStatus.Text);
+        Notice.Text = UiText.Translate(Notice.Text);
+        if (settings.SkinFile.Length == 0)
+            SkinLabel.Text = UiText.Translate(SkinLabel.Text);
+        UpdateDiscoveryButton();
+        try
+        {
+            settings.Save();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            AppLog.Error("Save language preference", ex);
+            Notice.Text = UiText.Translate("Sprache konnte nicht gespeichert werden: " + ex.Message);
+        }
+        RefreshPreview();
     }
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -76,7 +101,7 @@ public partial class MainWindow : Window
             await operation();
         }
         catch (OperationCanceledException) when (lifetime.IsCancellationRequested) { }
-        catch (Exception ex) { AppLog.Error("UI operation", ex); Notice.Text = FriendlyError(ex); }
+        catch (Exception ex) { AppLog.Error("UI operation", ex); Notice.Text = UiText.Translate(FriendlyError(ex)); }
         finally { busy = false; UpdateControls(); }
     }
 
@@ -89,18 +114,19 @@ public partial class MainWindow : Window
 
     private void UpdateControls()
     {
+        LanguageChoice.IsEnabled = !busy;
         bool streaming = engine.IsStreaming;
         bool comboPalette = engine.Tosu.Frame?.Mode is not (1 or 3);
         ColourMode.IsEnabled = SkinFileButton.IsEnabled = ClearSkinButton.IsEnabled = comboPalette && !busy;
-        ColourMode.ToolTip = comboPalette ? "Combo-Farben für osu! und Catch" : "Taiko und Mania verwenden eine eigene Moduspalette.";
+        ColourMode.ToolTip = UiText.Translate(comboPalette ? "Combo-Farben für osu! und Catch" : "Taiko und Mania verwenden eine eigene Moduspalette.");
         DiscoverButton.IsEnabled = PairButton.IsEnabled = RefreshAreasButton.IsEnabled = BridgeIp.IsEnabled = AreaBox.IsEnabled = !busy && !streaming;
         InstallButton.IsEnabled = ReconnectButton.IsEnabled = TosuUrl.IsEnabled = !busy && !streaming;
         DemoButton.IsEnabled = !busy && (!streaming || engine.Demo);
         StartButton.IsEnabled = !busy;
-        StartButton.Content = busy ? "Bitte warten …" : streaming ? engine.Demo ? "Demo stoppen" : "Licht-Sync stoppen" : "Licht-Sync starten";
-        StreamBadge.Text = streaming ? engine.Demo ? "LICHT-DEMO AKTIV" : "LICHT-SYNC AKTIV" : "VORSCHAU";
-        DemoButton.Content = engine.Demo ? "Demo beenden" : pairedIp.Length > 0 ? "Licht-Demo" : "Vorschau-Demo";
-        DemoButton.ToolTip = pairedIp.Length > 0 ? "Testet Vorschau und Lampen im gewählten Bereich. osu! und tosu sind dafür nicht nötig." : "Ohne Kopplung läuft die Demo nur auf dem Bildschirm.";
+        StartButton.Content = UiText.Translate(busy ? "Bitte warten …" : streaming ? engine.Demo ? "Demo stoppen" : "Licht-Sync stoppen" : "Licht-Sync starten");
+        StreamBadge.Text = UiText.Translate(streaming ? engine.Demo ? "LICHT-DEMO AKTIV" : "LICHT-SYNC AKTIV" : "VORSCHAU");
+        DemoButton.Content = UiText.Translate(engine.Demo ? "Demo beenden" : pairedIp.Length > 0 ? "Licht-Demo" : "Vorschau-Demo");
+        DemoButton.ToolTip = UiText.Translate(pairedIp.Length > 0 ? "Testet Vorschau und Lampen im gewählten Bereich. osu! und tosu sind dafür nicht nötig." : "Ohne Kopplung läuft die Demo nur auf dem Bildschirm.");
     }
 
     private async void Discover_Click(object sender, RoutedEventArgs e) => await Run(async () =>
@@ -108,7 +134,7 @@ public partial class MainWindow : Window
         try
         {
             string ip = BridgeIp.Text.Trim();
-            BridgeStatus.Text = ip.Length > 0 ? $"Prüfe {ip} …" : "Suche im lokalen Netzwerk …";
+            BridgeStatus.Text = UiText.Translate(ip.Length > 0 ? $"Prüfe {ip} …" : "Suche im lokalen Netzwerk …");
             if (ip.Length == 0)
             {
                 var bridges = await HueSession.DiscoverAsync();
@@ -117,30 +143,32 @@ public partial class MainWindow : Window
                 BridgeIp.Text = ip = bridges[0];
             }
             var bridge = await HueSession.ProbeAsync(ip);
-            BridgeStatus.Text = $"{bridge.Name} gefunden · {bridge.Ip} · {bridge.Model}";
-            Notice.Text = "Bridge erreichbar. Drücke ihren runden Knopf und klicke danach auf „Koppeln“.";
+            BridgeStatus.Text = UiText.Translate($"{bridge.Name} gefunden · {bridge.Ip} · {bridge.Model}");
+            Notice.Text = UiText.Translate("Bridge erreichbar. Drücke ihren runden Knopf und klicke danach auf „Koppeln“.");
         }
-        catch { BridgeStatus.Text = "Bridge-Prüfung nicht erfolgreich"; throw; }
+        catch { BridgeStatus.Text = UiText.Translate("Bridge-Prüfung nicht erfolgreich"); throw; }
     });
 
-    private void BridgeIp_TextChanged(object sender, TextChangedEventArgs e)
+    private void BridgeIp_TextChanged(object sender, TextChangedEventArgs e) => UpdateDiscoveryButton();
+
+    private void UpdateDiscoveryButton()
     {
         if (DiscoverButton is not null)
-            DiscoverButton.Content = string.IsNullOrWhiteSpace(BridgeIp.Text) ? "Suchen" : "IP prüfen";
+            DiscoverButton.Content = UiText.Translate(string.IsNullOrWhiteSpace(BridgeIp.Text) ? "Suchen" : "IP prüfen");
     }
 
     private async void Pair_Click(object sender, RoutedEventArgs e) => await Run(async () =>
     {
         var ip = BridgeIp.Text.Trim();
         var bridge = await HueSession.ProbeAsync(ip);
-        BridgeStatus.Text = $"{bridge.Name} erreichbar · Kopplung läuft …";
+        BridgeStatus.Text = UiText.Translate($"{bridge.Name} erreichbar · Kopplung läuft …");
         var credentials = await HueSession.PairAsync(ip);
         settings.BridgeIp = pairedIp = ip;
         settings.SetCredentials(credentials.AppKey, credentials.ClientKey);
         settings.Save();
-        BridgeStatus.Text = "Bridge gekoppelt · Schlüssel lokal geschützt";
+        BridgeStatus.Text = UiText.Translate("Bridge gekoppelt · Schlüssel lokal geschützt");
         await LoadAreas();
-        Notice.Text = "Kopplung gespeichert. Wähle deinen Entertainment-Bereich.";
+        Notice.Text = UiText.Translate("Kopplung gespeichert. Wähle deinen Entertainment-Bereich.");
     });
 
     private async void RefreshAreas_Click(object sender, RoutedEventArgs e) => await Run(LoadAreas);
@@ -152,9 +180,9 @@ public partial class MainWindow : Window
         var areas = await HueSession.GetAreasAsync(pairedIp, credentials.AppKey);
         AreaBox.ItemsSource = areas;
         AreaBox.SelectedItem = areas.FirstOrDefault(x => x.Id.ToString() == settings.AreaId) ?? areas.FirstOrDefault();
-        BridgeStatus.Text = areas.Length > 0 ? $"Bridge bereit · {areas.Length} Entertainment-Bereich(e)" : "Gekoppelt · noch kein Entertainment-Bereich";
+        BridgeStatus.Text = UiText.Translate(areas.Length > 0 ? $"Bridge bereit · {areas.Length} Entertainment-Bereich(e)" : "Gekoppelt · noch kein Entertainment-Bereich");
         if (areas.Length == 0)
-            Notice.Text = "Erstelle in der Hue App einen Entertainment-Bereich mit deinen farbfähigen Lampen. Danach hier auf ↻ klicken.";
+            Notice.Text = UiText.Translate("Erstelle in der Hue App einen Entertainment-Bereich mit deinen farbfähigen Lampen. Danach hier auf ↻ klicken.");
     }
 
     private async void Reconnect_Click(object sender, RoutedEventArgs e) => await Run(async () =>
@@ -163,12 +191,12 @@ public partial class MainWindow : Window
         settings.TosuUrl = address;
         settings.Save();
         await engine.Tosu.ConnectAsync(settings.TosuUrl);
-        Notice.Text = "Verbindung zu tosu wird neu aufgebaut.";
+        Notice.Text = UiText.Translate("Verbindung zu tosu wird neu aufgebaut.");
     });
 
     private async void Install_Click(object sender, RoutedEventArgs e) => await Run(async () =>
     {
-        var progress = new Progress<string>(text => Notice.Text = text);
+        var progress = new Progress<string>(text => Notice.Text = UiText.Translate(text));
         await TosuInstaller.InstallAndStartAsync(progress, lifetime.Token);
         await engine.Tosu.ConnectAsync(TosuUrl.Text);
     });
@@ -178,13 +206,13 @@ public partial class MainWindow : Window
         if (engine.IsStreaming)
         {
             await engine.StopAsync();
-            Notice.Text = "Licht-Sync gestoppt · vorherige Lampeneinstellungen wiederhergestellt.";
+            Notice.Text = UiText.Translate("Licht-Sync gestoppt · vorherige Lampeneinstellungen wiederhergestellt.");
             return;
         }
         if (engine.Tosu.Frame is not { Age: < 500 })
             throw new InvalidOperationException("Starte zuerst tosu und osu! stable oder lazer. Eine gekoppelte Bridge allein reicht noch nicht.");
         await engine.StartAsync(CreateHueSession());
-        Notice.Text = "Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.";
+        Notice.Text = UiText.Translate("Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.");
     });
 
     private HueSession CreateHueSession()
@@ -205,17 +233,17 @@ public partial class MainWindow : Window
         {
             bool wasStreaming = engine.IsStreaming;
             await engine.StopAsync();
-            Notice.Text = wasStreaming ? "Demo beendet · vorherige Lampeneinstellungen wiederhergestellt." : "Demo beendet · Vorschau folgt wieder osu!.";
+            Notice.Text = UiText.Translate(wasStreaming ? "Demo beendet · vorherige Lampeneinstellungen wiederhergestellt." : "Demo beendet · Vorschau folgt wieder osu!.");
         }
         else if (pairedIp.Length > 0)
         {
             await engine.StartAsync(CreateHueSession(), demo: true);
-            Notice.Text = "Licht-Demo aktiv · zum Zurücksetzen auf „Demo beenden“ klicken.";
+            Notice.Text = UiText.Translate("Licht-Demo aktiv · zum Zurücksetzen auf „Demo beenden“ klicken.");
         }
         else
         {
             engine.Demo = true;
-            Notice.Text = "Nur Bildschirmvorschau. Kopple die Bridge und wähle einen Bereich, um die Lampen mitzutesten.";
+            Notice.Text = UiText.Translate("Nur Bildschirmvorschau. Kopple die Bridge und wähle einen Bereich, um die Lampen mitzutesten.");
         }
     });
 
@@ -248,12 +276,12 @@ public partial class MainWindow : Window
     }
     private void UpdatePalette()
     {
-        settings.ColourSource = (ColourMode.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Automatisch";
+        settings.ColourSource = (ColourMode.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Automatisch";
         engine.Tosu.SetPaletteOptions(settings.SkinFile, settings.ColourSource);
     }
     private void Skin_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new OpenFileDialog { Filter = "osu!-Skin (skin.ini)|skin.ini|INI-Dateien (*.ini)|*.ini", Title = "skin.ini auswählen" };
+        var picker = new OpenFileDialog { Filter = UiText.Translate("osu!-Skin (skin.ini)|skin.ini|INI-Dateien (*.ini)|*.ini"), Title = UiText.Translate("skin.ini auswählen") };
         if (picker.ShowDialog(this) == true)
         {
             settings.SkinFile = picker.FileName;
@@ -264,7 +292,7 @@ public partial class MainWindow : Window
     private void ClearSkin_Click(object sender, RoutedEventArgs e)
     {
         settings.SkinFile = "";
-        SkinLabel.Text = "osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette.";
+        SkinLabel.Text = UiText.Translate("osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette.");
         UpdatePalette();
     }
 
@@ -277,12 +305,12 @@ public partial class MainWindow : Window
         CircleFill.Fill = brush;
         CircleFill.Opacity = state.Pulse.Brightness * 0.7;
         CircleRing.Opacity = Math.Max(0.16, Math.Sqrt(state.Pulse.Brightness));
-        ColourHex.Text = state.Pulse.Brightness > 0 ? colour.Hex : state.Playing ? "ZWISCHEN IMPULSEN" : "BEREIT";
+        ColourHex.Text = UiText.Translate(state.Pulse.Brightness > 0 ? colour.Hex : state.Playing ? "ZWISCHEN IMPULSEN" : "BEREIT");
         HitNumber.Text = state.Pulse.HitIndex >= 0 ? (state.Pulse.HitIndex + 1).ToString() : "—";
-        MapTitle.Text = state.Title;
-        PaletteSource.Text = state.Source;
-        PlayStatus.Text = state.Status;
-        TosuStatus.Text = engine.Tosu.Status;
+        MapTitle.Text = engine.Tosu.Loaded is null && !engine.Demo ? UiText.Translate(state.Title) : state.Title;
+        PaletteSource.Text = UiText.Translate(state.Source);
+        PlayStatus.Text = UiText.Translate(state.Status);
+        TosuStatus.Text = UiText.Translate(engine.Tosu.Status);
         var paletteKey = string.Join(",", state.Palette.Select(x => x.Hex));
         if (lastPalette != paletteKey)
         {
@@ -294,7 +322,7 @@ public partial class MainWindow : Window
         if (engine.Error is string error && error != lastError)
         {
             lastError = error;
-            Notice.Text = error;
+            Notice.Text = UiText.Translate(error);
         }
         if (!busy)
             UpdateControls();
@@ -311,7 +339,7 @@ public partial class MainWindow : Window
         lifetime.Cancel();
         refresh.Stop();
         IsEnabled = false;
-        Notice.Text = "Beenden · Licht-Sync wird gestoppt …";
+        Notice.Text = UiText.Translate("Beenden · Licht-Sync wird gestoppt …");
         // Let an in-progress pairing/start operation finish before disposing shared state.
         while (busy)
             await Task.Delay(50);
@@ -331,7 +359,7 @@ public partial class MainWindow : Window
         {
             if (lifecycleTest)
                 throw new AggregateException(failures);
-            MessageBox.Show("Beim Beenden ist ein Fehler aufgetreten: " + string.Join(" · ", failures.Select(x => x.Message)), "osu!hue");
+            MessageBox.Show(UiText.Translate("Beim Beenden ist ein Fehler aufgetreten: " + string.Join(" · ", failures.Select(x => UiText.Translate(x.Message)))), "osu!hue");
         }
         allowClose = true;
         // Disposal may complete synchronously. Queue Close after the original
@@ -346,18 +374,18 @@ public partial class MainWindow : Window
         Height = compact ? 760 : 900;
         ApplyResponsiveLayout(Width);
         MapTitle.Text = "onoken — Sakimori Souka [Hyper]";
-        PaletteSource.Text = "Skin-Farben";
-        PlayStatus.Text = "Spielt · Impulse folgen der Beatmap";
-        TosuStatus.Text = "tosu verbunden · osu! stable";
-        BridgeIp.Text = "192.168.1.20";
-        BridgeStatus.Text = "Bridge bereit · 1 Entertainment-Bereich";
-        AreaBox.Items.Add("Schreibtisch · 3 Lichtkanäle");
+        PaletteSource.Text = UiText.Translate("Skin-Farben");
+        PlayStatus.Text = UiText.Translate("Spielt · Impulse folgen der Beatmap");
+        TosuStatus.Text = UiText.Translate("tosu verbunden · osu! stable");
+        BridgeIp.Text = UiText.Translate("192.168.1.20");
+        BridgeStatus.Text = UiText.Translate("Bridge bereit · 1 Entertainment-Bereich");
+        AreaBox.Items.Add(new HueArea(Guid.Empty, "Desk", 3));
         AreaBox.SelectedIndex = 0;
         CircleRing.Stroke = new SolidColorBrush(Color.FromRgb(255, 120, 168));
         CircleFill.Fill = CircleRing.Stroke;
         CircleFill.Opacity = 0.34;
-        ColourHex.Text = "#FF78A8";
-        HitNumber.Text = "24";
+        ColourHex.Text = UiText.Translate("#FF78A8");
+        HitNumber.Text = UiText.Translate("24");
         foreach (var c in new[] { "#FF78A8", "#62C4FF", "#B7EC6D", "#BF93FF" })
             PaletteSwatches.Children.Add(new Ellipse { Width = 19, Height = 19, Fill = (Brush)new BrushConverter().ConvertFromString(c)!, Margin = new Thickness(0, 0, 8, 0) });
         var root = (FrameworkElement)Content;

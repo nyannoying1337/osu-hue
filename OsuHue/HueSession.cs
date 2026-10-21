@@ -11,7 +11,7 @@ namespace OsuHue;
 
 public sealed record HueArea(Guid Id, string Name, int Channels)
 {
-    public override string ToString() => $"{Name} · {Channels} Lichtkanäle";
+    public override string ToString() => UiText.Translate($"{Name} · {Channels} Lichtkanäle");
 }
 
 public sealed record HueBridgeInfo(string Ip, string Name, string Model);

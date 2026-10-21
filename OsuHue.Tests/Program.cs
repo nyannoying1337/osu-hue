@@ -62,6 +62,18 @@ void Throws(Action action, string name)
     Check(threw, name);
 }
 
+UiText.SetLanguage("en");
+Check(UiText.Translate("Licht-Sync starten") == "Start light sync", "English action label");
+Check(UiText.Translate("Bridge bereit · 2 Entertainment-Bereich(e)") == "Bridge ready · 2 Entertainment area(s)", "English dynamic Bridge status preserves counts");
+Check(UiText.Translate("Map nicht lesbar: Die Map wurde während des Ladens gewechselt. · Neuer Versuch in 3 s.") == "Map unreadable: The map changed while loading. · Retrying in 3 s.", "nested map errors translate without leaving a German reason");
+Check(UiText.Translate("tosu: Die Map wurde während des Ladens gewechselt.") == "tosu: The map changed while loading.", "prefixed transport errors translate their reason");
+Check(UiText.Translate("My map [Licht-Sync starten]") == "My map [Licht-Sync starten]", "unknown user text remains untouched");
+UiText.SetLanguage("de");
+Check(UiText.Translate("Start light sync") == "Licht-Sync starten", "language switch reverses an existing English label");
+Check(UiText.Translate("Bridge ready · 2 Entertainment area(s)") == "Bridge bereit · 2 Entertainment-Bereich(e)", "existing formatted status switches back to German");
+Throws(() => UiText.SetLanguage("fr"), "reject unavailable languages");
+UiText.SetLanguage("en");
+
 var demoOptions = new EffectOptions(.45, 180, 60);
 var automaticTempos = new[] { 90, 120, 180, 240, 300, 90 };
 for (int stage = 0; stage < automaticTempos.Length; stage++)
@@ -185,7 +197,9 @@ try
     Check(repaired.SkinFile == "" && repaired.BridgeIp == "", "null settings cannot crash startup");
     Check(repaired.Brightness == 100 && repaired.Fade == 40 && repaired.Offset == 300, "out-of-range effects are normalized");
     Check(repaired.TosuUrl == "http://127.0.0.1:24050" && repaired.LoadWarning is not null, "invalid persisted URL falls back with explanation");
+    repaired.Language = "de";
     repaired.Save(settingsPath);
+    Check(Settings.Load(settingsPath).Language == "de", "language preference persists independently of colour-source IDs");
     Check(Settings.Load(settingsPath).Brightness == 100, "atomic settings save round-trips");
     File.WriteAllText(settingsPath, "{invalid json");
     Check(Settings.Load(settingsPath).LoadWarning is not null, "corrupt settings produce a visible warning");

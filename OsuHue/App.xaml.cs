@@ -21,7 +21,7 @@ public partial class App : Application
             else
             {
                 AppLog.Error("Unhandled UI error", args.Exception);
-                MessageBox.Show("Die App wird nach einem unerwarteten Fehler geschlossen: " + args.Exception.Message, "osu!hue", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(UiText.Translate("Die App wird nach einem unerwarteten Fehler geschlossen: " + args.Exception.Message), "osu!hue", MessageBoxButton.OK, MessageBoxImage.Error);
                 MainWindow?.Close();
             }
         };

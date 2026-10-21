@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="osu!hue ribbon mark">
+  <defs><linearGradient id="light" x1="58" y1="0" x2="193" y2="0" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#ff6d9e"/><stop offset=".52" stop-color="#af92ff"/><stop offset="1" stop-color="#65d9e6"/>
+  </linearGradient></defs>
+  <rect x="8" y="8" width="240" height="240" rx="58" fill="#131620" stroke="#31374a"/>
+  <g fill="none" stroke="url(#light)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M72 68 L72 184"/><path d="M72 146 C93 146 105 104 135 104 C160 104 179 124 179 151 L179 184"/>
+  </g>
+</svg>

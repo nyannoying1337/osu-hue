@@ -105,3 +105,14 @@ combo progression for fruit/juice-stream heads. Nested objects are not
 synthesised. Mania groups simultaneous notes once during loading and mixes
 their column accents during rendering. This adds no map scan to the 50-Hz loop.
 Unsupported conversions fail closed instead of reusing the source map's mode.
+
+## Localisation and branding
+
+Translations.json contains English/German text and formatted message templates.
+UiText translates at the presentation boundary and updates WPF dynamic resources
+on language changes. Incoming data, beatmap titles, paths and persisted palette
+IDs remain unchanged. Bounded caching avoids repeated template matching in the
+preview refresh. A language change refreshes labels, status and area display
+without disconnecting tosu or Hue. External OS/library diagnostics may retain
+their original language. The optional Pillow icon script generates SVG, PNG
+and ICO assets from one ribbon geometry; no graphics dependency ships at runtime.

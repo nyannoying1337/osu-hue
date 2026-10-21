@@ -13,7 +13,7 @@ Download the Windows ZIP from [Releases](https://github.com/nyannoying1337/osu-h
 3. Click **Licht-Demo** to try the lights. Pick a fixed tempo or cycle through 90, 120, 180, 240 and 300 BPM.
 4. For gameplay, open osu! stable or lazer and run **normal released tosu**. The app can download and start the official release for you. Once the preview recognises your map, click **Licht-Sync starten**.
 
-The interface is currently in German. **Demo beenden** and **Licht-Sync stoppen** stop the lights and restore their previous state. Normal app close does the same; network or power failures can prevent restoration.
+Choose **English** or **Deutsch** in the top-right language selector. English is the default; the selection is saved locally and switches immediately without restarting the light stream. **Demo beenden** and **Licht-Sync stoppen** stop the lights and restore their previous state. Normal app close does the same; network or power failures can prevent restoration.
 
 ### Does this need patched tosu?
 
@@ -62,7 +62,7 @@ dotnet run --project OsuHue.Tests/OsuHue.Tests.csproj -c Release --no-restore
 
 The publish script produces a self-contained Windows x64 app in `artifacts/windows`, including dependency notices and the quick-start guide. GitHub Actions runs the regression suite and publishes a build artifact on pushes and pull requests.
 
-The automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
+The 132 automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
 
 See [the architecture notes](docs-architecture.md) for parsing, timing, lifecycle and UI details.
 
@@ -76,8 +76,10 @@ Third-party license texts are in [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES). tos
 
 ## Project notes
 
-This is an independent community tool, not an official osu! or Philips Hue product. The text heading and independent ring-and-dot icon are separate from the animated preview; no osu! cookie logo is recreated or modified. See the [osu! brand guidelines](https://osu.ppy.sh/wiki/en/Brand_identity_guidelines).
+This is an independent community tool, not an official osu! or Philips Hue product. The independent ribbon-shaped h mark is separate from the animated preview; no osu! cookie logo is recreated or modified. See the [osu! brand guidelines](https://osu.ppy.sh/wiki/en/Brand_identity_guidelines).
 
 Development used substantial assistance from OpenAI Codex with GPT 6.1 Sol (`gpt-6.1-sol`).
 
 Palette references: [osu! Argon](https://github.com/ppy/osu/blob/master/osu.Game/Skinning/ArgonSkin.cs), [Mania column accents](https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Skinning/Argon/ManiaArgonSkinTransformer.cs), and [Taiko's classic colours](https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Taiko/Skinning/Legacy/LegacyHit.cs).
+
+The icon source is [brand-mark.svg](docs/images/brand-mark.svg). Rebuild the PNG and Windows icon with `python scripts/BuildIcon.py` (Pillow required for this optional asset task).

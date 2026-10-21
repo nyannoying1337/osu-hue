@@ -1,0 +1,1028 @@
+[
+  {
+    "key": "Ui.IndependentCommunityToolForOsuAndPhilipsHue",
+    "en": "Independent community tool for osu! and Philips Hue.",
+    "de": "Unabhängiges Community-Tool für osu! und Philips Hue.",
+    "nested": false
+  },
+  {
+    "key": "Ui.SetupAndLightPreview",
+    "en": "Setup and light preview",
+    "de": "Einrichtung und Lichtvorschau",
+    "nested": false
+  },
+  {
+    "key": "Ui.IpAddress",
+    "en": "IP address",
+    "de": "IP-Adresse",
+    "nested": false
+  },
+  {
+    "key": "Ui.HueBridgeIpAddress",
+    "en": "Hue Bridge IP address",
+    "de": "IP-Adresse der Hue Bridge",
+    "nested": false
+  },
+  {
+    "key": "Ui.FindTheLocalIpInTheHueApp",
+    "en": "Find the local IP in the Hue app under Settings and Bridges.",
+    "de": "Die lokale IP-Adresse findest du in der Hue App unter Einstellungen und Bridges.",
+    "nested": false
+  },
+  {
+    "key": "Ui.Search",
+    "en": "Search",
+    "de": "Suchen",
+    "nested": false
+  },
+  {
+    "key": "Ui.CheckIp",
+    "en": "Check IP",
+    "de": "IP prüfen",
+    "nested": false
+  },
+  {
+    "key": "Ui.Pair",
+    "en": "Pair",
+    "de": "Koppeln",
+    "nested": false
+  },
+  {
+    "key": "Ui.PressTheButtonOnTheBridgeFirst",
+    "en": "Press the button on the Bridge first.",
+    "de": "Vorher den Knopf auf der Bridge drücken.",
+    "nested": false
+  },
+  {
+    "key": "Ui.NotPairedYet",
+    "en": "Not paired yet",
+    "de": "Noch nicht gekoppelt",
+    "nested": false
+  },
+  {
+    "key": "Ui.EntertainmentArea",
+    "en": "Entertainment area",
+    "de": "Entertainment-Bereich",
+    "nested": false
+  },
+  {
+    "key": "Ui.ReloadAreas",
+    "en": "Reload areas",
+    "de": "Bereiche neu laden",
+    "nested": false
+  },
+  {
+    "key": "Ui.ReloadEntertainmentAreas",
+    "en": "Reload Entertainment areas",
+    "de": "Entertainment-Bereiche neu laden",
+    "nested": false
+  },
+  {
+    "key": "Ui.MissingAnAreaCreateOneUnderEntertainmentAreas",
+    "en": "Missing an area? Create one under Entertainment areas in the Hue app.",
+    "de": "Fehlt ein Bereich? Erstelle ihn in der Hue App unter Entertainment-Bereiche.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ConnectOsu",
+    "en": "Connect osu!",
+    "de": "osu! verbinden",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuReadsTheMapAndPlaybackTimeFrom",
+    "en": "tosu reads the map and playback time from osu! stable or lazer. The light demo also works without the game.",
+    "de": "tosu liefert Map und Spielzeit aus osu! stable oder lazer. Die Licht-Demo funktioniert auch ohne Spiel.",
+    "nested": false
+  },
+  {
+    "key": "Ui.DownloadAndStartTosu",
+    "en": "Download and start tosu",
+    "de": "tosu herunterladen & starten",
+    "nested": false
+  },
+  {
+    "key": "Ui.WaitingForTosu",
+    "en": "Waiting for tosu …",
+    "de": "Warte auf tosu …",
+    "nested": false
+  },
+  {
+    "key": "Ui.ConnectionAndSkin",
+    "en": "Connection and skin",
+    "de": "Verbindung und Skin",
+    "nested": false
+  },
+  {
+    "key": "Ui.LocalTosuAddress",
+    "en": "Local tosu address",
+    "de": "Lokale tosu-Adresse",
+    "nested": false
+  },
+  {
+    "key": "Ui.Reconnect",
+    "en": "Reconnect",
+    "de": "Neu verbinden",
+    "nested": false
+  },
+  {
+    "key": "Ui.ColourSource",
+    "en": "Colour source",
+    "de": "Farbquelle",
+    "nested": false
+  },
+  {
+    "key": "Ui.Automatic",
+    "en": "Automatic",
+    "de": "Automatisch",
+    "nested": false
+  },
+  {
+    "key": "Ui.ChooseASkinIni",
+    "en": "Choose a skin.ini …",
+    "de": "Eigene skin.ini wählen …",
+    "nested": false
+  },
+  {
+    "key": "Ui.OsuCatchAutomaticSkinColoursManiaTaikoRuleset",
+    "en": "osu!/Catch: automatic skin colours; Mania/Taiko: ruleset palette.",
+    "de": "osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ResetSkinSelection",
+    "en": "Reset skin selection",
+    "de": "Skin-Auswahl zurücksetzen",
+    "nested": false
+  },
+  {
+    "key": "Ui.LivePreview",
+    "en": "LIVE PREVIEW",
+    "de": "LIVE-VORSCHAU",
+    "nested": false
+  },
+  {
+    "key": "Ui.Ready",
+    "en": "READY",
+    "de": "BEREIT",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightPulsePreview",
+    "en": "Light pulse preview",
+    "de": "Vorschau des Lichtimpulses",
+    "nested": false
+  },
+  {
+    "key": "Ui.WaitingForABeatmap",
+    "en": "Waiting for a beatmap",
+    "de": "Warte auf eine Beatmap",
+    "nested": false
+  },
+  {
+    "key": "Ui.SelectAMapInOsu",
+    "en": "Select a map in osu!",
+    "de": "Wähle eine Map in osu!",
+    "nested": false
+  },
+  {
+    "key": "Ui.ThePreviewWorksWithoutABridge",
+    "en": "The preview works without a Bridge.",
+    "de": "Die Vorschau funktioniert ohne Bridge.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TuneTheLights",
+    "en": "Tune the lights",
+    "de": "Licht abstimmen",
+    "nested": false
+  },
+  {
+    "key": "Ui.Brightness",
+    "en": "Brightness",
+    "de": "Helligkeit",
+    "nested": false
+  },
+  {
+    "key": "Ui.BrightnessInPercent",
+    "en": "Brightness in percent",
+    "de": "Helligkeit in Prozent",
+    "nested": false
+  },
+  {
+    "key": "Ui.Afterglow",
+    "en": "Afterglow",
+    "de": "Nachleuchten",
+    "nested": false
+  },
+  {
+    "key": "Ui.AfterglowInMilliseconds",
+    "en": "Afterglow in milliseconds",
+    "de": "Nachleuchten in Millisekunden",
+    "nested": false
+  },
+  {
+    "key": "Ui.AdvanceTheLights",
+    "en": "Advance the lights",
+    "de": "Licht vorziehen",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightAdvanceInMilliseconds",
+    "en": "Light advance in milliseconds",
+    "de": "Licht vorziehen in Millisekunden",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightsLateIncreaseTheOffsetLongerAfterglowSoftens",
+    "en": "Lights late? Increase the offset. Longer afterglow softens fast sequences.",
+    "de": "Licht zu spät? Wert erhöhen. Mehr Nachleuchten macht schnelle Folgen weicher.",
+    "nested": false
+  },
+  {
+    "key": "Ui.DemoTempo",
+    "en": "Demo tempo",
+    "de": "Demo-Tempo",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightDemoTempo",
+    "en": "Light demo tempo",
+    "de": "Tempo der Licht-Demo",
+    "nested": false
+  },
+  {
+    "key": "Ui.Automatic90300Bpm",
+    "en": "Automatic · 90–300 BPM",
+    "de": "Automatisch · 90–300 BPM",
+    "nested": false
+  },
+  {
+    "key": "Ui.90BpmSlow",
+    "en": "90 BPM · slow",
+    "de": "90 BPM · langsam",
+    "nested": false
+  },
+  {
+    "key": "Ui.120BpmMedium",
+    "en": "120 BPM · medium",
+    "de": "120 BPM · mittel",
+    "nested": false
+  },
+  {
+    "key": "Ui.180BpmFast",
+    "en": "180 BPM · fast",
+    "de": "180 BPM · schnell",
+    "nested": false
+  },
+  {
+    "key": "Ui.240BpmVeryFast",
+    "en": "240 BPM · very fast",
+    "de": "240 BPM · sehr schnell",
+    "nested": false
+  },
+  {
+    "key": "Ui.300BpmExtremelyFast",
+    "en": "300 BPM · extremely fast",
+    "de": "300 BPM · extrem schnell",
+    "nested": false
+  },
+  {
+    "key": "Ui.StartLightSync",
+    "en": "Start light sync",
+    "de": "Licht-Sync starten",
+    "nested": false
+  },
+  {
+    "key": "Ui.StopLightSync",
+    "en": "Stop light sync",
+    "de": "Licht-Sync stoppen",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightDemo",
+    "en": "Light demo",
+    "de": "Licht-Demo",
+    "nested": false
+  },
+  {
+    "key": "Ui.PairBridgeSelectAreaTryTheLightDemo",
+    "en": "Pair Bridge → select area → try the light demo.",
+    "de": "Bridge koppeln → Bereich wählen → Licht-Demo testen.",
+    "nested": false
+  },
+  {
+    "key": "Ui.OsuHue040BeatmapLight",
+    "en": "osu!hue 0.4.0 · Beatmap → Light",
+    "de": "osu!hue 0.4.0 · Beatmap → Licht",
+    "nested": false
+  },
+  {
+    "key": "Ui.BetweenPulses",
+    "en": "BETWEEN PULSES",
+    "de": "ZWISCHEN IMPULSEN",
+    "nested": false
+  },
+  {
+    "key": "Ui.Preview",
+    "en": "PREVIEW",
+    "de": "VORSCHAU",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightDemoActive",
+    "en": "LIGHT DEMO ACTIVE",
+    "de": "LICHT-DEMO AKTIV",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightSyncActive",
+    "en": "LIGHT SYNC ACTIVE",
+    "de": "LICHT-SYNC AKTIV",
+    "nested": false
+  },
+  {
+    "key": "Ui.PleaseWait",
+    "en": "Please wait …",
+    "de": "Bitte warten …",
+    "nested": false
+  },
+  {
+    "key": "Ui.StopDemo",
+    "en": "Stop demo",
+    "de": "Demo stoppen",
+    "nested": false
+  },
+  {
+    "key": "Ui.EndDemo",
+    "en": "End demo",
+    "de": "Demo beenden",
+    "nested": false
+  },
+  {
+    "key": "Ui.PreviewDemo",
+    "en": "Preview demo",
+    "de": "Vorschau-Demo",
+    "nested": false
+  },
+  {
+    "key": "Ui.TestsThePreviewAndLightsInTheSelected",
+    "en": "Tests the preview and lights in the selected area. osu! and tosu are not needed.",
+    "de": "Testet Vorschau und Lampen im gewählten Bereich. osu! und tosu sind dafür nicht nötig.",
+    "nested": false
+  },
+  {
+    "key": "Ui.WithoutPairingTheDemoRunsOnScreenOnly",
+    "en": "Without pairing, the demo runs on screen only.",
+    "de": "Ohne Kopplung läuft die Demo nur auf dem Bildschirm.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ComboColoursForOsuAndCatch",
+    "en": "Combo colours for osu! and Catch",
+    "de": "Combo-Farben für osu! und Catch",
+    "nested": false
+  },
+  {
+    "key": "Ui.TaikoAndManiaUseTheirOwnRulesetPalettes",
+    "en": "Taiko and Mania use their own ruleset palettes.",
+    "de": "Taiko und Mania verwenden eine eigene Moduspalette.",
+    "nested": false
+  },
+  {
+    "key": "Ui.PairingSavedLoadingAreas",
+    "en": "Pairing saved · loading areas",
+    "de": "Kopplung gespeichert · Bereich wird geladen",
+    "nested": false
+  },
+  {
+    "key": "Ui.Checking0",
+    "en": "Checking {0} …",
+    "de": "Prüfe {0} …",
+    "nested": false
+  },
+  {
+    "key": "Ui.SearchingTheLocalNetwork",
+    "en": "Searching the local network …",
+    "de": "Suche im lokalen Netzwerk …",
+    "nested": false
+  },
+  {
+    "key": "Ui.NoBridgeFoundEnterItsIpFromThe",
+    "en": "No Bridge found. Enter its IP from the Hue app and click “Check IP”.",
+    "de": "Keine Bridge gefunden. Trage die IP aus der Hue App ein und klicke auf „IP prüfen“.",
+    "nested": false
+  },
+  {
+    "key": "Ui.0Found12",
+    "en": "{0} found · {1} · {2}",
+    "de": "{0} gefunden · {1} · {2}",
+    "nested": false
+  },
+  {
+    "key": "Ui.BridgeReachablePressItsRoundButtonThenClick",
+    "en": "Bridge reachable. Press its round button, then click “Pair”.",
+    "de": "Bridge erreichbar. Drücke ihren runden Knopf und klicke danach auf „Koppeln“.",
+    "nested": false
+  },
+  {
+    "key": "Ui.BridgeCheckFailed",
+    "en": "Bridge check failed",
+    "de": "Bridge-Prüfung nicht erfolgreich",
+    "nested": false
+  },
+  {
+    "key": "Ui.0ReachablePairing",
+    "en": "{0} reachable · pairing …",
+    "de": "{0} erreichbar · Kopplung läuft …",
+    "nested": false
+  },
+  {
+    "key": "Ui.BridgePairedKeysProtectedLocally",
+    "en": "Bridge paired · keys protected locally",
+    "de": "Bridge gekoppelt · Schlüssel lokal geschützt",
+    "nested": false
+  },
+  {
+    "key": "Ui.PairingSavedSelectYourEntertainmentArea",
+    "en": "Pairing saved. Select your Entertainment area.",
+    "de": "Kopplung gespeichert. Wähle deinen Entertainment-Bereich.",
+    "nested": false
+  },
+  {
+    "key": "Ui.PairTheBridgeFirst",
+    "en": "Pair the Bridge first.",
+    "de": "Bitte zuerst die Bridge koppeln.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBridgeIpChangedPairThisBridgeFirst",
+    "en": "The Bridge IP changed. Pair this Bridge first.",
+    "de": "Die Bridge-IP wurde geändert. Bitte diese Bridge zuerst koppeln.",
+    "nested": false
+  },
+  {
+    "key": "Ui.BridgeReady0EntertainmentAreaS",
+    "en": "Bridge ready · {0} Entertainment area(s)",
+    "de": "Bridge bereit · {0} Entertainment-Bereich(e)",
+    "nested": false
+  },
+  {
+    "key": "Ui.BridgeReady1EntertainmentArea",
+    "en": "Bridge ready · 1 Entertainment area",
+    "de": "Bridge bereit · 1 Entertainment-Bereich",
+    "nested": false
+  },
+  {
+    "key": "Ui.PairedNoEntertainmentAreaYet",
+    "en": "Paired · no Entertainment area yet",
+    "de": "Gekoppelt · noch kein Entertainment-Bereich",
+    "nested": false
+  },
+  {
+    "key": "Ui.CreateAnEntertainmentAreaWithYourColourLights",
+    "en": "Create an Entertainment area with your colour lights in the Hue app. Then click ↻ here.",
+    "de": "Erstelle in der Hue App einen Entertainment-Bereich mit deinen farbfähigen Lampen. Danach hier auf ↻ klicken.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ReconnectingToTosu",
+    "en": "Reconnecting to tosu.",
+    "de": "Verbindung zu tosu wird neu aufgebaut.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightSyncStoppedPreviousLightSettingsRestored",
+    "en": "Light sync stopped · previous light settings restored.",
+    "de": "Licht-Sync gestoppt · vorherige Lampeneinstellungen wiederhergestellt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.StartTosuAndOsuStableOrLazerFirst",
+    "en": "Start tosu and osu! stable or lazer first. Pairing the Bridge alone is not enough.",
+    "de": "Starte zuerst tosu und osu! stable oder lazer. Eine gekoppelte Bridge allein reicht noch nicht.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightSyncActiveStartANativeMapIn",
+    "en": "Light sync active. Start a native map in your chosen ruleset. Click “Stop light sync” to restore the lights.",
+    "de": "Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBridgeIpChangedPairItAgain",
+    "en": "The Bridge IP changed. Pair it again.",
+    "de": "Die Bridge-IP wurde geändert. Bitte erneut koppeln.",
+    "nested": false
+  },
+  {
+    "key": "Ui.SelectAnEntertainmentAreaIfNoneExistsCreate",
+    "en": "Select an Entertainment area. If none exists, create one in the Hue app.",
+    "de": "Wähle einen Entertainment-Bereich. Falls keiner vorhanden ist, erstelle ihn in der Hue App.",
+    "nested": false
+  },
+  {
+    "key": "Ui.DemoEndedPreviousLightSettingsRestored",
+    "en": "Demo ended · previous light settings restored.",
+    "de": "Demo beendet · vorherige Lampeneinstellungen wiederhergestellt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.DemoEndedPreviewFollowsOsuAgain",
+    "en": "Demo ended · preview follows osu! again.",
+    "de": "Demo beendet · Vorschau folgt wieder osu!.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightDemoActiveClickEndDemoToRestore",
+    "en": "Light demo active · click “End demo” to restore the lights.",
+    "de": "Licht-Demo aktiv · zum Zurücksetzen auf „Demo beenden“ klicken.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ScreenPreviewOnlyPairTheBridgeAndSelect",
+    "en": "Screen preview only. Pair the Bridge and select an area to include your lights.",
+    "de": "Nur Bildschirmvorschau. Kopple die Bridge und wähle einen Bereich, um die Lampen mitzutesten.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ChooseSkinIni",
+    "en": "Choose skin.ini",
+    "de": "skin.ini auswählen",
+    "nested": false
+  },
+  {
+    "key": "Ui.OsuSkinSkinIniSkinIniIniFiles",
+    "en": "osu! skin (skin.ini)|skin.ini|INI files (*.ini)|*.ini",
+    "de": "osu!-Skin (skin.ini)|skin.ini|INI-Dateien (*.ini)|*.ini",
+    "nested": false
+  },
+  {
+    "key": "Ui.ClosingStoppingLightSync",
+    "en": "Closing · stopping light sync …",
+    "de": "Beenden · Licht-Sync wird gestoppt …",
+    "nested": false
+  },
+  {
+    "key": "Ui.AnErrorOccurredWhileClosing0",
+    "en": "An error occurred while closing: {0}",
+    "de": "Beim Beenden ist ein Fehler aufgetreten: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.TheAppIsClosingAfterAnUnexpectedError",
+    "en": "The app is closing after an unexpected error: {0}",
+    "de": "Die App wird nach einem unerwarteten Fehler geschlossen: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.ConnectionFailedCheckTheBridgeIpNetworkAnd",
+    "en": "Connection failed. Check the Bridge IP, network and power. {0}",
+    "de": "Verbindung fehlgeschlagen. Prüfe Bridge-IP, Netzwerk und ob die Bridge eingeschaltet ist. {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.TheConnectionTimedOutCheckTheBridgeIp",
+    "en": "The connection timed out. Check the Bridge IP and network.",
+    "de": "Die Verbindung hat nicht rechtzeitig geantwortet. Prüfe Bridge-IP und Netzwerk.",
+    "nested": false
+  },
+  {
+    "key": "Ui.SettingsCouldNotBeReadDefaultsAreActive",
+    "en": "Settings could not be read. Defaults are active; pair the Bridge again if needed.",
+    "de": "Einstellungen konnten nicht gelesen werden. Standardwerte sind aktiv; kopple die Bridge bei Bedarf erneut.",
+    "nested": false
+  },
+  {
+    "key": "Ui.InvalidTosuAddressDiscardedTheLocalDefaultAddress",
+    "en": "Invalid tosu address discarded. The local default address is active.",
+    "de": "Ungültige tosu-Adresse verworfen. Die lokale Standardadresse ist aktiv.",
+    "nested": false
+  },
+  {
+    "key": "Ui.01LightChannels",
+    "en": "{0} · {1} light channels",
+    "de": "{0} · {1} Lichtkanäle",
+    "nested": false
+  },
+  {
+    "key": "Ui.PleaseEnterTheHueBridgeSLocalIpv4",
+    "en": "Please enter the Hue Bridge's local IPv4 address, e.g. 192.168.1.20.",
+    "de": "Bitte die lokale IPv4-Adresse der Hue Bridge eingeben, z. B. 192.168.1.20.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBridgeMustHaveALocalNetworkAddress",
+    "en": "The Bridge must have a local network address.",
+    "de": "Die Bridge muss eine lokale Netzwerkadresse haben.",
+    "nested": false
+  },
+  {
+    "key": "Ui.NoRecognisablePhilipsHueBridgeRespondedAt0",
+    "en": "No recognisable Philips Hue Bridge responded at {0}.",
+    "de": "Unter {0} antwortet keine erkennbare Philips Hue Bridge.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheRoundHueBridgeV1DoesNotSupport",
+    "en": "The round Hue Bridge v1 does not support Hue Entertainment. A newer Bridge is required.",
+    "de": "Die runde Hue Bridge v1 unterstützt Hue Entertainment nicht. Dafür wird eine neuere Bridge benötigt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.PressTheRoundButtonOnTheBridgeFirst",
+    "en": "Press the round button on the Bridge first, then click “Pair” within 30 seconds.",
+    "de": "Drücke zuerst den runden Knopf auf der Bridge. Klicke danach innerhalb von 30 Sekunden auf „Koppeln“.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBridgeRejectedPairing",
+    "en": "The Bridge rejected pairing.",
+    "de": "Die Bridge hat die Kopplung abgelehnt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.NoAppKeyReceived",
+    "en": "No app key received.",
+    "de": "Kein App-Schlüssel erhalten.",
+    "nested": false
+  },
+  {
+    "key": "Ui.NoStreamingKeyReceived",
+    "en": "No streaming key received.",
+    "de": "Kein Streaming-Schlüssel erhalten.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheHuePairingIsNoLongerValidPair",
+    "en": "The Hue pairing is no longer valid. Pair again.",
+    "de": "Die Hue-Kopplung ist nicht mehr gültig. Bitte erneut koppeln.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBridgeDoesNotSupportThisEntertainmentInterface",
+    "en": "The Bridge does not support this Entertainment interface.",
+    "de": "Die Bridge unterstützt diese Entertainment-Schnittstelle nicht.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheEntertainmentAreaWasNotFound",
+    "en": "The Entertainment area was not found.",
+    "de": "Der Entertainment-Bereich wurde nicht gefunden.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheEntertainmentAreaContainsNoLights",
+    "en": "The Entertainment area contains no lights.",
+    "de": "Der Entertainment-Bereich enthält keine Lampen.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ThisAreaIsAlreadyInUseStopHue",
+    "en": "This area is already in use. Stop Hue Sync or the other light synchronisation first.",
+    "de": "Dieser Bereich wird bereits verwendet. Beende Hue Sync bzw. die andere Licht-Synchronisierung zuerst.",
+    "nested": false
+  },
+  {
+    "key": "Ui.CouldNotSaveTheLightStateRefreshThe",
+    "en": "Could not save the light state. Refresh the Entertainment area in the Hue app.",
+    "de": "Der Lampenzustand konnte nicht gesichert werden. Aktualisiere den Entertainment-Bereich in der Hue App.",
+    "nested": false
+  },
+  {
+    "key": "Ui.SomeLightsCouldNotBeRestored0",
+    "en": "Some lights could not be restored: {0}",
+    "de": "Einige Lampen konnten nicht zurückgesetzt werden: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.TosuIsAlreadyRunningOpenOsuStableOr",
+    "en": "tosu is already running · open osu! stable or lazer.",
+    "de": "tosu läuft bereits · öffne jetzt osu! stable oder lazer.",
+    "nested": false
+  },
+  {
+    "key": "Ui.DownloadingTosu0",
+    "en": "Downloading tosu … {0} %",
+    "de": "tosu wird geladen … {0} %",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuVerifyingDownload",
+    "en": "tosu: verifying download …",
+    "de": "tosu: Download wird geprüft …",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheDownloadChecksumDoesNotMatchTheDownload",
+    "en": "The download checksum does not match. The download will not be started.",
+    "de": "Die Download-Prüfsumme stimmt nicht. Der Download wird nicht gestartet.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuExeIsMissingFromTheDownload",
+    "en": "tosu.exe is missing from the download.",
+    "de": "tosu.exe fehlt im Download.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuStartedOpenOsuStableOrLazer",
+    "en": "tosu started · open osu! stable or lazer.",
+    "de": "tosu gestartet · öffne jetzt osu! stable oder lazer.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightDemoPreviewAndLightsRunTogether",
+    "en": "Light demo · preview and lights run together",
+    "de": "Licht-Demo · Vorschau und Lampen laufen gemeinsam",
+    "nested": false
+  },
+  {
+    "key": "Ui.PreviewRunningWithoutLights",
+    "en": "Preview running without lights",
+    "de": "Vorschau läuft ohne Lampen",
+    "nested": false
+  },
+  {
+    "key": "Ui.DemoColoursColourChangesEvery4Beats",
+    "en": "Demo colours · colour changes every 4 beats",
+    "de": "Demo-Farben · Farbwechsel alle 4 Schläge",
+    "nested": false
+  },
+  {
+    "key": "Ui.NotConnectedToTosuYet",
+    "en": "Not connected to tosu yet",
+    "de": "tosu noch nicht verbunden",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuMustRunLocallyEGHttp127",
+    "en": "tosu must run locally, e.g. http://127.0.0.1:24050.",
+    "de": "tosu muss lokal laufen, z. B. http://127.0.0.1:24050.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ConnectingToTosu",
+    "en": "Connecting to tosu …",
+    "de": "Verbinde mit tosu …",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuClosedTheConnection",
+    "en": "tosu closed the connection.",
+    "de": "tosu hat die Verbindung geschlossen.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuMessageIsTooLarge",
+    "en": "tosu message is too large.",
+    "de": "tosu-Nachricht ist zu groß.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuIsRunningStartOsuAndSelectA",
+    "en": "tosu is running. Start osu! and select a map.",
+    "de": "tosu läuft. Starte osu! und wähle eine Map.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuConnectedOsu0",
+    "en": "tosu connected · osu! {0}",
+    "de": "tosu verbunden · osu! {0}",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuUnavailableStartTosuRetryingIn3S",
+    "en": "tosu unavailable. Start tosu; retrying in 3 s.",
+    "de": "tosu nicht erreichbar. Starte tosu; erneuter Versuch in 3 s.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheMapChangedWhileLoading",
+    "en": "The map changed while loading.",
+    "de": "Die Map wurde während des Ladens gewechselt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheRulesetChangedWhileLoading",
+    "en": "The ruleset changed while loading.",
+    "de": "Der Spielmodus wurde während des Ladens gewechselt.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TaikoDonKatLightPalette",
+    "en": "Taiko · Don/Kat light palette",
+    "de": "Taiko · Don/Kat-Lichtpalette",
+    "nested": false
+  },
+  {
+    "key": "Ui.Mania0KColumnAccentsNotTextureColours",
+    "en": "Mania · {0}K column accents · not texture colours",
+    "de": "Mania · {0}K-Spaltenakzente · keine Texturfarben",
+    "nested": false
+  },
+  {
+    "key": "Ui.MapUnreadable0RetryingIn3S",
+    "en": "Map unreadable: {0} · Retrying in 3 s.",
+    "de": "Map nicht lesbar: {0} · Neuer Versuch in 3 s.",
+    "nested": true
+  },
+  {
+    "key": "Ui.BeatmapColours",
+    "en": "Beatmap colours",
+    "de": "Beatmap-Farben",
+    "nested": false
+  },
+  {
+    "key": "Ui.SkinColours",
+    "en": "Skin colours",
+    "de": "Skin-Farben",
+    "nested": false
+  },
+  {
+    "key": "Ui.ClassicDefaultColoursChooseSkinIniIfNeeded",
+    "en": "Classic default colours · choose skin.ini if needed",
+    "de": "Classic-Standardfarben · ggf. skin.ini wählen",
+    "nested": false
+  },
+  {
+    "key": "Ui.InvalidTosuRedirect",
+    "en": "Invalid tosu redirect.",
+    "de": "Ungültige tosu-Weiterleitung.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuMayOnlyLoadFilesFromTheSame",
+    "en": "tosu may only load files from the same local address.",
+    "de": "tosu darf Dateien nur von derselben lokalen Adresse laden.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TooManyTosuRedirects",
+    "en": "Too many tosu redirects.",
+    "de": "Zu viele tosu-Weiterleitungen.",
+    "nested": false
+  },
+  {
+    "key": "Ui.NotConnectedToTosu",
+    "en": "Not connected to tosu",
+    "de": "tosu nicht verbunden",
+    "nested": false
+  },
+  {
+    "key": "Ui.NoColourPaletteYet",
+    "en": "No colour palette yet",
+    "de": "Noch keine Farbpalette",
+    "nested": false
+  },
+  {
+    "key": "Ui.ALightStreamIsAlreadyRunning",
+    "en": "A light stream is already running.",
+    "de": "Ein Licht-Stream läuft bereits.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightSyncCouldNotStartOrFullyRestore",
+    "en": "Light sync could not start or fully restore the lights.",
+    "de": "Licht-Sync konnte nicht gestartet und nicht vollständig zurückgesetzt werden.",
+    "nested": false
+  },
+  {
+    "key": "Ui.HueStreamInterrupted0",
+    "en": "Hue stream interrupted: {0}",
+    "de": "Hue-Stream unterbrochen: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.0RestoreFailed1",
+    "en": "{0} · Restore failed: {1}",
+    "de": "{0} · Rücksetzen fehlgeschlagen: {1}",
+    "nested": true
+  },
+  {
+    "key": "Ui.PausedLightPulsesStopped",
+    "en": "Paused · light pulses stopped",
+    "de": "Pausiert · Lichtimpulse angehalten",
+    "nested": false
+  },
+  {
+    "key": "Ui.WaitingForTheMapToStart",
+    "en": "Waiting for the map to start",
+    "de": "Warte auf den Map-Start",
+    "nested": false
+  },
+  {
+    "key": "Ui.0ObjectStartsNoTicksSustainedEffects",
+    "en": "{0} · Object starts · no ticks/sustained effects",
+    "de": "{0} · Objektanfänge · keine Ticks/Verläufe",
+    "nested": false
+  },
+  {
+    "key": "Ui.PlayingPulsesFollowTheBeatmap",
+    "en": "Playing · pulses follow the beatmap",
+    "de": "Spielt · Impulse folgen der Beatmap",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheResponseIsNotAnOsuBeatmap",
+    "en": "The response is not an osu! beatmap.",
+    "de": "Die Antwort ist keine osu!-Beatmap.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBeatmapContainsAnInvalidHitObject",
+    "en": "The beatmap contains an invalid hit object.",
+    "de": "Die Beatmap enthält ein ungültiges Hitobject.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBeatmapContainsNoHitObjects",
+    "en": "The beatmap contains no hit objects.",
+    "de": "Die Beatmap enthält keine Hitobjects.",
+    "nested": false
+  },
+  {
+    "key": "Ui.InvalidBeatmapVersionOrRuleset",
+    "en": "Invalid beatmap version or ruleset.",
+    "de": "Ungültige Beatmap-Version oder ungültiger Spielmodus.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ThisRulesetConversionIsNotSupportedYetSelect",
+    "en": "This ruleset conversion is not supported yet. Select a native map for the ruleset.",
+    "de": "Diese Modus-Konvertierung wird noch nicht unterstützt. Wähle eine native Map für den Spielmodus.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TheBeatmapContainsInvalidTimingOrVersionInformation",
+    "en": "The beatmap contains invalid timing or version information.",
+    "de": "Die Beatmap enthält ungültige Zeit- oder Versionsangaben.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ManiaRequiresBetween1And18Columns",
+    "en": "Mania requires between 1 and 18 columns.",
+    "de": "Mania benötigt zwischen 1 und 18 Spalten.",
+    "nested": false
+  },
+  {
+    "key": "Ui.InvalidTaikoHitSound",
+    "en": "Invalid Taiko hit sound.",
+    "de": "Ungültiger Taiko-Hitsound.",
+    "nested": false
+  },
+  {
+    "key": "Ui.ThisOldManiaMapRequiresSliderSpinnerConversion",
+    "en": "This old Mania map requires slider/spinner conversion.",
+    "de": "Diese alte Mania-Map benötigt eine Slider-/Spinner-Konvertierung.",
+    "nested": false
+  },
+  {
+    "key": "Ui.InvalidManiaColumn",
+    "en": "Invalid Mania column.",
+    "de": "Ungültige Mania-Spalte.",
+    "nested": false
+  },
+  {
+    "key": "Ui.Desk3LightChannels",
+    "en": "Desk · 3 light channels",
+    "de": "Schreibtisch · 3 Lichtkanäle",
+    "nested": false
+  },
+  {
+    "key": "Ui.SaveLanguageError",
+    "en": "Could not save language preference: {0}",
+    "de": "Sprache konnte nicht gespeichert werden: {0}",
+    "nested": false
+  },
+  {
+    "key": "Ui.TosuError",
+    "en": "tosu: {0}",
+    "de": "tosu: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.HueError",
+    "en": "Hue: {0}",
+    "de": "Hue: {0}",
+    "nested": true
+  },
+  {
+    "key": "Ui.UnknownRuleset",
+    "en": "Unknown ruleset",
+    "de": "Unbekannter Modus",
+    "nested": false
+  },
+  {
+    "key": "Ui.DemoTempoRange",
+    "en": "Demo tempo must be automatic (0) or 60–360 BPM.",
+    "de": "Das Demo-Tempo muss automatisch (0) oder 60–360 BPM sein.",
+    "nested": false
+  },
+  {
+    "key": "Ui.LightChannels",
+    "en": "light channels",
+    "de": "Lichtkanäle",
+    "nested": false
+  }
+]

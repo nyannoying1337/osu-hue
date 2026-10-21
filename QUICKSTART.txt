@@ -2,6 +2,7 @@ osu!hue 0.4.0 — Windows x64 preview
 
 Extract the complete ZIP and run OsuHue.exe. No separate .NET installation
 is required. This is an independent community tool.
+Choose English or Deutsch at the top right. Your language choice is saved.
 
 1. Enter your own Hue Bridge IP address and click IP pruefen (IP prüfen).
 2. Press the physical Bridge button, click Koppeln, then select an
