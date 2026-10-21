@@ -48,7 +48,7 @@ Windows x64 supports native maps for all four rulesets in stable and lazer. Effe
 
 Argon and Argon Pro's default combo palettes are detected in lazer. Mania uses Argon's column accents for those built-in skins; other skins use a clearly labelled white/cyan/yellow light palette. This is a lighting interpretation, not a reconstruction of note textures. Edited/imported lazer skins need a manual `skin.ini` for osu!/Catch combo colours. Taiko/Mania ignore that combo-colour control.
 
-Standard-to-Catch head pulses also work. Other converted maps and old Mania maps needing slider/spinner conversion are rejected with an explanation. Mods that rearrange Mania columns and custom skin textures are not reproduced. Very fast notes may blend together on physical lamps.
+Standard-to-Taiko conversion includes short sliders that become Don/Kat notes, with timing points, slider velocity, repeats and per-node sounds. Standard-to-Catch head pulses also work. Mania conversions and old Mania maps needing slider/spinner conversion are rejected with an explanation. Mods that rearrange Mania columns and custom skin textures are not reproduced. Very fast notes may blend together on physical lamps.
 
 ## Build and test
 
@@ -62,7 +62,7 @@ dotnet run --project OsuHue.Tests/OsuHue.Tests.csproj -c Release --no-restore
 
 The publish script produces a self-contained Windows x64 app in `artifacts/windows`, including dependency notices and the quick-start guide. GitHub Actions runs the regression suite and publishes a build artifact on pushes and pull requests.
 
-The 132 automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
+The 151 automated checks use local HTTP/WebSocket fixtures and a simulated Hue transport. They don't operate your lights. Manual checks covered pairing reuse, map loading, keyboard controls, a real 300-BPM Entertainment demo and successful stop/restoration responses. The 0.4.0 window also loaded live lazer maps and started/stopped the real Hue stream; no complete lazer playthrough on physical lights has been verified. Physical colour/timing has not been measured. Lazer data loading is checked locally; automated fixtures cover all four rulesets. Linux is unsupported.
 
 See [the architecture notes](docs-architecture.md) for parsing, timing, lifecycle and UI details.
 

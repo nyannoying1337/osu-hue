@@ -26,6 +26,7 @@ public sealed class TosuClient : IAsyncDisposable
     public TosuFrame? Frame => Volatile.Read(ref frame);
     public LoadedMap? Loaded => Volatile.Read(ref loaded);
     public string Status => Volatile.Read(ref status);
+    public string? MapError => Volatile.Read(ref mapError);
     private TosuFrame? frame;
     private LoadedMap? loaded;
     private string status = "tosu noch nicht verbunden";
@@ -129,8 +130,9 @@ public sealed class TosuClient : IAsyncDisposable
                                 await loading;
                             mapLifetime?.Dispose();
                             mapLifetime = CancellationTokenSource.CreateLinkedTokenSource(cancel);
+                            if (requestedKey != next.MapKey)
+                                mapError = null;
                             requestedKey = next.MapKey;
-                            mapError = null;
                             lastMapAttempt = Stopwatch.GetTimestamp();
                             loaded = null;
                             loading = LoadMapAsync(uri, next, options.File, options.Mode, mapLifetime.Token);
@@ -181,7 +183,8 @@ public sealed class TosuClient : IAsyncDisposable
         string installation = Text(root, "folders", "game");
         string skinPath = Text(root, "folders", "skin");
         int state = (int)Number(root, "state", "number");
-        int mode = (int)Number(root, state == 2 ? "play" : "beatmap", "mode", "number");
+        var selectedMode = Property(root, "settings", "mode", "number");
+        int mode = (int)Number(root, state == 2 ? "play" : selectedMode.ValueKind == JsonValueKind.Number ? "settings" : "beatmap", "mode", "number");
         string key = $"{mode}|{checksum}|{path}|{skin}|{ignore}|{client}|{installation}|{skinPath}|{generation}";
         return new(key, Number(root, "beatmap", "time", "live"), rate, state == 2 && mode is >= 0 and <= 3, Flag(root, "game", "paused"), Text(root, "client"), ignore, skin, Stopwatch.GetTimestamp())
         {
@@ -248,7 +251,10 @@ public sealed class TosuClient : IAsyncDisposable
                 (palette, source) = (RulesetEffects.ManiaColours(map.Keys, requested.Client == "lazer" && RulesetEffects.IsArgon(requested.SkinName)), $"Mania · {map.Keys}K-Spaltenakzente · keine Texturfarben");
             // A map/skin switch while the HTTP requests were running invalidates this result.
             if (!cancel.IsCancellationRequested && Frame?.MapKey == requested.MapKey)
+            {
+                mapError = null;
                 loaded = new(requested.MapKey, map, palette, source, ReferenceEquals(palette, map.Colours));
+            }
         }
         catch (OperationCanceledException) when (cancel.IsCancellationRequested) { }
         catch (Exception ex)

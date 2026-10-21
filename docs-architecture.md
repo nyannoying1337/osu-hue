@@ -116,3 +116,17 @@ preview refresh. A language change refreshes labels, status and area display
 without disconnecting tosu or Hue. External OS/library diagnostics may retain
 their original language. The optional Pillow icon script generates SVG, PNG
 and ICO assets from one ribbon geometry; no graphics dependency ships at runtime.
+
+## Taiko conversion
+
+A source Mode:0 file can be played as Taiko in lazer/stable. ParseFrame uses
+the active gameplay mode, or the selected menu mode outside gameplay, so
+changing between selection and play does not switch a convert back to osu!.
+TaikoConversion follows the short-slider conversion branch in ppy/osu's
+TaikoBeatmapConverter (MIT notice included). Red timing, inherited SV,
+version-dependent thresholds, integer duration truncation, repeats and node
+hitsounds determine converted notes. Preserve its float promotion and operation
+order at the two-beat boundary. Long sliders/drum rolls and swells stay silent.
+A conversion cue limit rejects pathological maps before unbounded allocation.
+Load errors appear in the main preview before pause/loading status, while
+the current frame retains the map title. Failed retries retain their reason.

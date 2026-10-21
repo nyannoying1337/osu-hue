@@ -212,7 +212,7 @@ public partial class MainWindow : Window
         if (engine.Tosu.Frame is not { Age: < 500 })
             throw new InvalidOperationException("Starte zuerst tosu und osu! stable oder lazer. Eine gekoppelte Bridge allein reicht noch nicht.");
         await engine.StartAsync(CreateHueSession());
-        Notice.Text = UiText.Translate("Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.");
+        Notice.Text = UiText.Translate("Licht-Sync aktiv. Starte eine Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.");
     });
 
     private HueSession CreateHueSession()
@@ -307,7 +307,7 @@ public partial class MainWindow : Window
         CircleRing.Opacity = Math.Max(0.16, Math.Sqrt(state.Pulse.Brightness));
         ColourHex.Text = UiText.Translate(state.Pulse.Brightness > 0 ? colour.Hex : state.Playing ? "ZWISCHEN IMPULSEN" : "BEREIT");
         HitNumber.Text = state.Pulse.HitIndex >= 0 ? (state.Pulse.HitIndex + 1).ToString() : "—";
-        MapTitle.Text = engine.Tosu.Loaded is null && !engine.Demo ? UiText.Translate(state.Title) : state.Title;
+        MapTitle.Text = engine.Tosu.Frame is null && !engine.Demo ? UiText.Translate(state.Title) : state.Title;
         PaletteSource.Text = UiText.Translate(state.Source);
         PlayStatus.Text = UiText.Translate(state.Status);
         TosuStatus.Text = UiText.Translate(engine.Tosu.Status);

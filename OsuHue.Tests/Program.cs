@@ -41,6 +41,13 @@ if (args is ["--probe-tosu", var address])
     return;
 }
 
+if (args is ["--inspect-taiko", var mapPath])
+{
+    var parsed = Beatmap.Parse(await File.ReadAllTextAsync(mapPath), 1);
+    Console.WriteLine($"Taiko cues: {parsed.Hits.Length}; Don: {parsed.Hits.Count(x => x.ColourIndex == 0)}; Kat: {parsed.Hits.Count(x => x.ColourIndex == 1)}; first: {parsed.Hits.FirstOrDefault()?.Time}; last: {parsed.Hits.LastOrDefault()?.Time}");
+    return;
+}
+
 var checks = new List<string>();
 void Check(bool condition, string name)
 {
@@ -164,6 +171,24 @@ Check(chordPulse.Colour == new Rgb(229, 128, 138) && chordPulse.Brightness == .5
 var taikoMap = Beatmap.Parse(Map("64,64,1000,1,0\n64,64,1500,1,2\n64,64,2000,1,8\n64,64,2500,1,4\n64,64,3000,2,0,L|100:100,1,100", mode: 1));
 Check(taikoMap.Hits.Select(x => x.ColourIndex).SequenceEqual(new[] { 0, 1, 1, 0 }), "taiko whistle and clap are Kat, finish alone stays Don; rolls do not invent hits");
 Check(Beatmap.Parse(Map(objects, mode: 2)).Hits.Length == 5, "catch emits fruit and juice-stream head pulses");
+static string ConvertedTaiko(string objects, string timing = "0,500,4,1,0,100,1,0", int version = 14) =>
+    Map(objects, version: version).Replace("[HitObjects]", "[Difficulty]\nSliderMultiplier:1\nSliderTickRate:1\n[TimingPoints]\n" + timing + "\n[HitObjects]");
+var shortSlider = Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|164:64,1,100,0|2"), 1);
+Check(shortSlider.Mode == 1 && shortSlider.Hits.Select(x => x.Time).SequenceEqual(new double[] { 1000, 1500 }), "Taiko convert splits a one-beat slider into two playable hits");
+Check(shortSlider.Hits.Select(x => x.ColourIndex).SequenceEqual(new[] { 0, 1 }), "converted slider node sounds select Don then Kat");
+Check(Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|264:64,1,200"), 1).Hits.Length == 0, "exactly two beats is a drum roll, not converted hit pulses");
+var repeatedSlider = Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|114:64,2,50,0|2|8"), 1);
+Check(repeatedSlider.Hits.Select(x => x.Time).SequenceEqual(new double[] { 1000, 1250, 1500 }), "converted repeat slider uses span duration for hit spacing");
+Check(repeatedSlider.Hits.Select(x => x.ColourIndex).SequenceEqual(new[] { 0, 1, 1 }), "converted repeat slider follows per-node sound sequence");
+const string speedTiming = "0,500,4,1,0,100,1,0\n500,-50,4,1,0,100,0,0";
+Check(Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|364:64,1,300", speedTiming, 8), 1).Hits.Select(x => x.Time).SequenceEqual(new double[] { 1000, 1500 }), "v8 Taiko conversion threshold uses the unscaled beat length");
+Check(Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|364:64,1,300", speedTiming, 7), 1).Hits.Length == 0, "pre-v8 Taiko conversion threshold uses the speed-adjusted beat length");
+foreach (string simultaneous in new[] { "1000,-50,4,1,0,100,0,0\n1000,500,4,1,0,100,1,0", "1000,500,4,1,0,100,1,0\n1000,-50,4,1,0,100,0,0" })
+    Check(Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|164:64,1,100", simultaneous), 1).Hits.Last().Time == 1250, "inherited SV at the same timestamp overrides red timing regardless of file order");
+Check(Beatmap.Parse(ConvertedTaiko("64,64,1000,1,2", version: 4), 1).Hits[0].Time == 1024, "converted pre-v5 Taiko timing offset is applied once");
+Throws(() => Beatmap.Parse(ConvertedTaiko("64,64,1000,2,0,L|164:64,9001,100"), 1), "reject oversized slider repeat count during conversion");
+Throws(() => Beatmap.Parse(ConvertedTaiko("64,64,1000,1,0", "0,Infinity,4,1,0,100,1,0"), 1), "reject non-finite Taiko conversion timing");
+
 Throws(() => Beatmap.Parse(sample, 3), "reject unimplemented standard-to-mania conversion instead of inventing lanes");
 Throws(() => Beatmap.Parse(Map("NaN,192,1000,1,0", mode: 3)), "reject invalid mania coordinates");
 Check(RulesetEffects.ManiaColours(14, true).Take(7).SequenceEqual(RulesetEffects.ManiaColours(14, true).Skip(7)), "14K Argon repeats the 7K stage accents");
@@ -403,6 +428,26 @@ Volatile.Write(ref stateJson, FrameJson(1100, true, 2, "lazer-mode-3", clientNam
 await WaitFor(() => !engine.Current.Playing && engine.Current.Pulse.Brightness == 0, "lazer mania pause stops pulses");
 Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "lazer-mode-3", clientName: "lazer", skinName: "osu! \"argon\" (2022)", mode: 3));
 await WaitFor(() => engine.Current.Playing, "lazer mania resume recovers pulses");
+Volatile.Write(ref mapResponse, ConvertedTaiko("64,64,1000,2,0,L|164:64,1,100,0|2"));
+Volatile.Write(ref stateJson, FrameJson(1500, false, 2, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
+var convertedLights = new FakeHueSession();
+await engine.StartAsync(convertedLights);
+await WaitFor(() => engine.Tosu.Loaded?.Map.Mode == 1 && engine.Current.Playing && convertedLights.LastPulse?.Colour == new Rgb(67, 142, 172),
+    "regression: lazer standard-to-Taiko conversion reaches the Hue transport as a Kat pulse");
+string convertKey = engine.Tosu.Loaded!.Key;
+Volatile.Write(ref stateJson, FrameJson(1500, true, 2, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
+await WaitFor(() => convertedLights.LastPulse?.Brightness == 0 && !engine.Current.Playing, "converted Taiko pause blacks out Hue output");
+Volatile.Write(ref stateJson, FrameJson(1500, false, 5, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
+await WaitFor(() => engine.Tosu.Frame is { Playing: false, Mode: 1 } && engine.Tosu.Frame.MapKey == convertKey,
+    "Taiko selection keeps the active ruleset and cache identity when the source file is standard");
+Volatile.Write(ref stateJson, FrameJson(1500, false, 2, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
+await WaitFor(() => convertedLights.LastPulse is { Brightness: > 0 } && engine.Current.Playing, "converted Taiko resumes without losing its palette");
+await engine.StopAsync();
+Volatile.Write(ref stateJson, FrameJson(1500, true, 2, "unsupported-convert", clientName: "lazer", mode: 3, sourceMode: 0));
+await WaitFor(() => engine.Current.Status.StartsWith("Map nicht lesbar"), "map error takes precedence over paused status in the preview");
+Check(engine.Current.Title != "Warte auf eine Beatmap", "failed loading retains the current frame's map title");
+Volatile.Write(ref stateJson, FrameJson(1500, false, 2, "taiko-convert", clientName: "lazer", mode: 1, sourceMode: 0));
+await WaitFor(() => engine.Current.Playing, "returning from unsupported conversion recovers Taiko");
 await Task.WhenAll(engine.Tosu.ConnectAsync(url), engine.Tosu.ConnectAsync(url));
 await WaitFor(() => engine.Current.Playing, "concurrent reconnects retain one healthy connection");
 await engine.DisposeAsync();
@@ -411,7 +456,7 @@ Check(true, "regression: repeated disposal completes without disposed-token erro
 await server.StopAsync();
 Console.WriteLine($"\n{checks.Count} checks passed. Hue hardware was not used.");
 
-static string FrameJson(double time, bool paused, int state, string checksum, double rate = 1, string clientName = "stable", string skinName = "Test Skin", int mode = 0) => JsonSerializer.Serialize(new
+static string FrameJson(double time, bool paused, int state, string checksum, double rate = 1, string clientName = "stable", string skinName = "Test Skin", int mode = 0, int? sourceMode = null) => JsonSerializer.Serialize(new
 {
     game = new
     {
@@ -424,6 +469,10 @@ static string FrameJson(double time, bool paused, int state, string checksum, do
     },
     settings = new
     {
+        mode = new
+        {
+            number = mode
+        },
         skin = new
         {
             name = skinName,
@@ -439,7 +488,7 @@ static string FrameJson(double time, bool paused, int state, string checksum, do
         },
         mode = new
         {
-            number = mode
+            number = sourceMode ?? mode
         }
     },
     play = new

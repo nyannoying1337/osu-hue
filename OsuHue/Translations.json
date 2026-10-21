@@ -312,9 +312,9 @@
     "nested": false
   },
   {
-    "key": "Ui.OsuHue040BeatmapLight",
-    "en": "osu!hue 0.4.0 · Beatmap → Light",
-    "de": "osu!hue 0.4.0 · Beatmap → Licht",
+    "key": "Ui.WindowTitle",
+    "en": "osu!hue 0.4.1 · Beatmap → Light",
+    "de": "osu!hue 0.4.1 · Beatmap → Licht",
     "nested": false
   },
   {
@@ -505,8 +505,8 @@
   },
   {
     "key": "Ui.LightSyncActiveStartANativeMapIn",
-    "en": "Light sync active. Start a native map in your chosen ruleset. Click “Stop light sync” to restore the lights.",
-    "de": "Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.",
+    "en": "Light sync active. Start a map in your chosen ruleset. Click “Stop light sync” to restore the lights.",
+    "de": "Licht-Sync aktiv. Starte eine Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.",
     "nested": false
   },
   {
@@ -1023,6 +1023,18 @@
     "key": "Ui.LightChannels",
     "en": "light channels",
     "de": "Lichtkanäle",
+    "nested": false
+  },
+  {
+    "key": "Ui.TaikoInvalidTiming",
+    "en": "Invalid timing data for Taiko conversion.",
+    "de": "Ungültige Timing-Daten für die Taiko-Konvertierung.",
+    "nested": false
+  },
+  {
+    "key": "Ui.TaikoInvalidSlider",
+    "en": "Invalid or excessively large slider in Taiko conversion.",
+    "de": "Ungültiger oder zu großer Slider bei der Taiko-Konvertierung.",
     "nested": false
   }
 ]

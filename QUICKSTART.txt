@@ -1,4 +1,4 @@
-osu!hue 0.4.0 — Windows x64 preview
+osu!hue 0.4.1 — Windows x64 preview
 
 Extract the complete ZIP and run OsuHue.exe. No separate .NET installation
 is required. This is an independent community tool.
@@ -29,7 +29,8 @@ osu!/Catch: combo colours, including built-in lazer Argon / Argon Pro.
 Taiko: Don/Kat red/blue pulses. Mania: column accents and mixed chords.
 These are object-start effects: no slider ticks/repeats, drum rolls, nested
 Catch fruit/droplets/bananas, hold tails or custom texture colours.
-Standard-to-Catch heads work; other converted maps are not supported.
+Standard-to-Taiko converts and Standard-to-Catch heads work. Mania
+conversions are not supported.
 Mania column-changing mods and custom texture colours are not reproduced.
 See README in the source repository for the full support table.
 

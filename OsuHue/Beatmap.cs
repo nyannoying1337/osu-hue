@@ -114,11 +114,12 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
         if (version <= 0 || mode is < 0 or > 3)
             throw new FormatException("Ungültige Beatmap-Version oder ungültiger Spielmodus.");
         int target = playMode ?? mode;
-        if (target != mode && !(mode == 0 && target == 2))
+        if (target != mode && !(mode == 0 && target is 1 or 2))
             throw new FormatException("Diese Modus-Konvertierung wird noch nicht unterstützt. Wähle eine native Map für den Spielmodus.");
         if (target == 3 && keys > 10)
             keys = keys / 2 * 2;
-        var cues = target is 1 or 3 ? RulesetEffects.BuildCues(records, target, keys, version) : BuildCues(rawObjects, breaks, version);
+        var cues = mode == 0 && target == 1 ? TaikoConversion.Build(text, records, version)
+            : target is 1 or 3 ? RulesetEffects.BuildCues(records, target, keys, version) : BuildCues(rawObjects, breaks, version);
         return new($"{artist} — {title} [{difficulty}]", target, cues, ReadColours(text))
         {
             Keys = keys

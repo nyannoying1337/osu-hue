@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="OsuHue.MainWindow" Title="{DynamicResource Ui.OsuHue040BeatmapLight}" Width="1100" Height="900" MinWidth="640" MinHeight="640" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Style="{StaticResource WindowTheme}">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="OsuHue.MainWindow" Title="{DynamicResource Ui.WindowTitle}" Width="1100" Height="900" MinWidth="640" MinHeight="640" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Style="{StaticResource WindowTheme}">
     <Grid x:Name="RootLayout" Margin="24" Background="{StaticResource Canvas}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

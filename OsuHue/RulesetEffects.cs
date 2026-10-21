@@ -71,7 +71,10 @@ public static class RulesetEffects
         }
         // One pulse per chord avoids letting the last object in file order
         // arbitrarily replace all other simultaneous notes.
-        return cues.OrderBy(x => x.Time).GroupBy(x => x.Time).Select(group =>
+        return GroupSimultaneous(cues);
+    }
+
+    internal static HitCue[] GroupSimultaneous(IEnumerable<HitCue> cues) => cues.OrderBy(x => x.Time).GroupBy(x => x.Time).Select(group =>
         {
             var first = group.First();
             return first with
@@ -79,5 +82,4 @@ public static class RulesetEffects
                 SimultaneousColours = group.Select(x => x.ColourIndex).Distinct().ToArray()
             };
         }).ToArray();
-    }
 }

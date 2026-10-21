@@ -140,7 +140,7 @@ public sealed class SyncEngine : IAsyncDisposable
                 if (playing)
                     pulse = Pulse.At(loaded!.Map, loaded.Palette, frame!.CurrentTime, frame.Rate, settings.Offset, settings.Fade, settings.Brightness, loaded.UseMapOffsets);
                 var state = GetPlayStatus(frame, loaded, fresh, matched);
-                next = new(pulse, loaded?.Palette ?? [], loaded?.Map.Title ?? "Warte auf eine Beatmap", loaded?.Source ?? "Wähle eine Map in osu!", state, playing, frame?.CurrentTime ?? 0);
+                next = new(pulse, loaded?.Palette ?? [], loaded?.Map.Title ?? frame?.Title ?? "Warte auf eine Beatmap", loaded?.Source ?? "Wähle eine Map in osu!", state, playing, frame?.CurrentTime ?? 0);
             }
             Volatile.Write(ref preview, next);
             IHueSession? failed = null;
@@ -180,6 +180,8 @@ public sealed class SyncEngine : IAsyncDisposable
     {
         if (!fresh || frame is null)
             return Tosu.Status;
+        if (!matched && Tosu.MapError is string mapError)
+            return mapError;
         if (frame.Paused && frame.Playing)
             return "Pausiert · Lichtimpulse angehalten";
         if (!frame.Playing)
