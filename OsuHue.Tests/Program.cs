@@ -17,6 +17,30 @@ if (args is ["--probe-bridge", var bridgeIp])
     return;
 }
 
+if (args is ["--probe-tosu", var address])
+{
+    await using var live = new SyncEngine();
+    await live.Tosu.ConnectAsync(address);
+    int frames = 0, pulses = 0;
+    string previous = "";
+    for (int i = 0; i < 200; i++)
+    {
+        await Task.Delay(100);
+        var current = live.Current;
+        if (live.Tosu.Frame is { Age: < 500 })
+            frames++;
+        if (current.Playing && current.Pulse.Brightness > 0)
+            pulses++;
+        string state = $"{live.Tosu.Frame?.Client} | {current.Status} | {current.Source} | {live.Tosu.Status}";
+        if (state != previous)
+            Console.WriteLine(state);
+        previous = state;
+    }
+    Console.WriteLine($"Fresh samples: {frames}; active pulse samples: {pulses}; palette: {string.Join(",", live.Current.Palette.Select(x => x.Hex))}");
+    Environment.ExitCode = frames > 0 && live.Tosu.Loaded is not null ? 0 : 1;
+    return;
+}
+
 var checks = new List<string>();
 void Check(bool condition, string name)
 {
@@ -114,6 +138,27 @@ Check(TosuClient.SelectPalette(map.Colours, skin, true, "Automatisch").Palette =
 Check(TosuClient.SelectPalette(map.Colours, skin, false, "Skin").Palette == skin, "manual skin override");
 Check(TosuClient.SelectPalette(map.Colours, skin, true, "Beatmap").Palette == map.Colours, "manual beatmap override");
 Check(TosuClient.SelectPalette([], [], true, "Automatisch").Palette.Length == 4, "fallback palette without skin.ini");
+var argon = RulesetEffects.BuiltInComboColours("lazer", "osu! \"argon\" (2022)");
+Check(argon.Length == 6 && argon[1] == new Rgb(0, 241, 53), "lazer Argon first combo uses its green, not classic green");
+Check(RulesetEffects.BuiltInComboColours("lazer", "osu! \"argon\" pro (2022)").SequenceEqual(argon), "Argon Pro inherits Argon colours");
+Check(RulesetEffects.BuiltInComboColours("stable", "osu! \"argon\" (2022)").Length == 0, "stable skin names do not trigger lazer built-in detection");
+Check(RulesetEffects.BuiltInComboColours("lazer", "my edited argon skin").Length == 0, "custom skins never silently assume Argon colours");
+var maniaMap = Beatmap.Parse(Map("0,192,1000,1,0\n512,192,1000,128,0,1500:0:0:0:0:", mode: 3).Replace("[Metadata]", "[Difficulty]\nCircleSize:4\n[Metadata]"));
+Check(maniaMap.Hits.Length == 1 && maniaMap.Hits[0].SimultaneousColours!.SequenceEqual(new[] { 0, 3 }), "mania chords include notes and hold heads, clamping the right edge");
+var maniaPalette = RulesetEffects.ManiaColours(4, true);
+Check(maniaPalette.SequenceEqual(new[] { new Rgb(255, 197, 40), new Rgb(252, 109, 1), new Rgb(213, 35, 90), new Rgb(203, 60, 236) }), "Argon 4K column accents match the official layout");
+var chordPulse = Pulse.At(maniaMap, maniaPalette, 1000, 1, 0, 180, .5);
+Check(chordPulse.Colour == new Rgb(229, 128, 138) && chordPulse.Brightness == .5, "mania chord mixes its columns into one bounded pulse");
+var taikoMap = Beatmap.Parse(Map("64,64,1000,1,0\n64,64,1500,1,2\n64,64,2000,1,8\n64,64,2500,1,4\n64,64,3000,2,0,L|100:100,1,100", mode: 1));
+Check(taikoMap.Hits.Select(x => x.ColourIndex).SequenceEqual(new[] { 0, 1, 1, 0 }), "taiko whistle and clap are Kat, finish alone stays Don; rolls do not invent hits");
+Check(Beatmap.Parse(Map(objects, mode: 2)).Hits.Length == 5, "catch emits fruit and juice-stream head pulses");
+Throws(() => Beatmap.Parse(sample, 3), "reject unimplemented standard-to-mania conversion instead of inventing lanes");
+Throws(() => Beatmap.Parse(Map("NaN,192,1000,1,0", mode: 3)), "reject invalid mania coordinates");
+Check(RulesetEffects.ManiaColours(14, true).Take(7).SequenceEqual(RulesetEffects.ManiaColours(14, true).Skip(7)), "14K Argon repeats the 7K stage accents");
+Throws(() => RulesetEffects.ManiaColours(19, true), "reject unsupported mania key counts");
+Check(Beatmap.Parse(Map("0,192,1000,1,0", mode: 3)).Keys == 5, "mania without difficulty settings uses osu's 5K default");
+
+
 Throws(() => TosuClient.ValidateUrl("http://example.com"), "reject remote tosu hosts");
 Throws(() => TosuClient.ValidateUrl("http://127.0.0.1:24050/foo"), "reject invalid tosu paths");
 Throws(() => TosuClient.ValidateUrl("https://127.0.0.1:24050"), "reject unsupported tosu protocol");
@@ -325,6 +370,25 @@ Volatile.Write(ref apiTimeline, TimelineJson("fast-map", 14));
 Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "fast-map"));
 await WaitFor(() => engine.Tosu.Frame?.Checksum == "fast-map" && engine.Current.Playing,
     "map switch cancels slow HTTP loading instead of waiting for timeout", 1500);
+Volatile.Write(ref serveTimeline, false);
+Volatile.Write(ref mapRedirect, 0);
+engine.Tosu.SetPaletteOptions("", "Automatisch");
+Volatile.Write(ref mapResponse, Map("64,64,1000,5,0", ""));
+Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "lazer-argon", clientName: "lazer", skinName: "osu! \"argon\" (2022)"));
+await WaitFor(() => engine.Current.Playing && engine.Current.Pulse.Colour == new Rgb(0, 241, 53), "lazer released-tosu fallback loads Argon and emits real engine pulses");
+Volatile.Write(ref serveTimeline, true);
+for (int ruleset = 1; ruleset <= 3; ruleset++)
+{
+    Volatile.Write(ref mapResponse, Map("64,64,1000,1,0", mode: ruleset));
+    Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "lazer-mode-" + ruleset, clientName: "lazer", skinName: "osu! \"argon\" (2022)", mode: ruleset));
+    int expected = ruleset;
+    await WaitFor(() => engine.Current.Playing && engine.Tosu.Loaded?.Map.Mode == expected && engine.Current.Pulse.Brightness > 0,
+        $"lazer {RulesetEffects.Name(ruleset)} flows through WebSocket, raw map and pulse engine");
+}
+Volatile.Write(ref stateJson, FrameJson(1100, true, 2, "lazer-mode-3", clientName: "lazer", skinName: "osu! \"argon\" (2022)", mode: 3));
+await WaitFor(() => !engine.Current.Playing && engine.Current.Pulse.Brightness == 0, "lazer mania pause stops pulses");
+Volatile.Write(ref stateJson, FrameJson(1100, false, 2, "lazer-mode-3", clientName: "lazer", skinName: "osu! \"argon\" (2022)", mode: 3));
+await WaitFor(() => engine.Current.Playing, "lazer mania resume recovers pulses");
 await Task.WhenAll(engine.Tosu.ConnectAsync(url), engine.Tosu.ConnectAsync(url));
 await WaitFor(() => engine.Current.Playing, "concurrent reconnects retain one healthy connection");
 await engine.DisposeAsync();
@@ -333,13 +397,13 @@ Check(true, "regression: repeated disposal completes without disposed-token erro
 await server.StopAsync();
 Console.WriteLine($"\n{checks.Count} checks passed. Hue hardware was not used.");
 
-static string FrameJson(double time, bool paused, int state, string checksum, double rate = 1) => JsonSerializer.Serialize(new
+static string FrameJson(double time, bool paused, int state, string checksum, double rate = 1, string clientName = "stable", string skinName = "Test Skin", int mode = 0) => JsonSerializer.Serialize(new
 {
     game = new
     {
         paused
     },
-    client = "stable",
+    client = clientName,
     state = new
     {
         number = state
@@ -348,7 +412,7 @@ static string FrameJson(double time, bool paused, int state, string checksum, do
     {
         skin = new
         {
-            name = "Test Skin",
+            name = skinName,
             ignoreBeatmapSkins = false
         }
     },
@@ -361,7 +425,7 @@ static string FrameJson(double time, bool paused, int state, string checksum, do
         },
         mode = new
         {
-            number = 0
+            number = mode
         }
     },
     play = new
@@ -372,7 +436,7 @@ static string FrameJson(double time, bool paused, int state, string checksum, do
         },
         mode = new
         {
-            number = 0
+            number = mode
         }
     },
     directPath = new

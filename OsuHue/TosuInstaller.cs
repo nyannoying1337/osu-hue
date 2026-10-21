@@ -15,7 +15,7 @@ public static class TosuInstaller
     {
         if (Process.GetProcessesByName("tosu").Length > 0)
         {
-            progress.Report("tosu läuft bereits · öffne jetzt osu! stable.");
+            progress.Report("tosu läuft bereits · öffne jetzt osu! stable oder lazer.");
             return;
         }
         var folder = Path.Combine(Settings.DataFolder, "tools", "tosu-" + Version);
@@ -64,6 +64,6 @@ public static class TosuInstaller
         }
         cancel.ThrowIfCancellationRequested();
         Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe), UseShellExecute = false, CreateNoWindow = true });
-        progress.Report("tosu gestartet · öffne jetzt osu! stable.");
+        progress.Report("tosu gestartet · öffne jetzt osu! stable oder lazer.");
     }
 }

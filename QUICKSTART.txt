@@ -1,4 +1,4 @@
-osu!hue 0.3.0 — Windows x64 preview
+osu!hue 0.4.0 — Windows x64 preview
 
 Extract the complete ZIP and run OsuHue.exe. No separate .NET installation
 is required. This is an independent community tool.
@@ -7,7 +7,7 @@ is required. This is an independent community tool.
 2. Press the physical Bridge button, click Koppeln, then select an
    Entertainment area created in the official Hue app.
 3. Click Licht-Demo to test your lights without osu! or tosu.
-4. For gameplay, open osu! stable and start normal released tosu. The app's
+4. For gameplay, open osu! stable or lazer and start normal released tosu. The app's
    download button can fetch the official release. Click Licht-Sync starten
    after the preview has recognised your map.
 
@@ -23,8 +23,14 @@ state. Normal close does too. Network/power failures may prevent restoration.
 Each person pairs their own Bridge. Credentials are stored locally with
 Windows DPAPI protection; no keys or settings are bundled in this ZIP.
 
-Target: osu! stable / osu!standard. No audio analysis, spinner effects,
-slider ticks/repeats or verified lazer/Argon support.
+Target: Windows x64, osu! stable or lazer; native maps in all four modes.
+osu!/Catch: combo colours, including built-in lazer Argon / Argon Pro.
+Taiko: Don/Kat red/blue pulses. Mania: column accents and mixed chords.
+These are object-start effects: no slider ticks/repeats, drum rolls, nested
+Catch fruit/droplets/bananas, hold tails or custom texture colours.
+Standard-to-Catch heads work; other converted maps are not supported.
+Mania column-changing mods and custom texture colours are not reproduced.
+See README in the source repository for the full support table.
 
 Source, issues and build instructions:
 https://github.com/nyannoying1337/osu-hue

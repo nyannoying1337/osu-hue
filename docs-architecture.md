@@ -1,8 +1,8 @@
 # osu!hue
 
-Native WPF app for Windows x64. Reads the current osu!standard beatmap and
+Native WPF app for Windows x64. Reads the current beatmap in any of the four rulesets and
 clock from local tosu v2 and streams combo-coloured pulses to a Hue
-Entertainment area. Initial target: osu! stable.
+Entertainment area. Supports stable and lazer.
 
 The companion remains a separate program. UI, Hue device control and effects
 live here; the optional tosu contribution exports generic beatmap data only.
@@ -94,3 +94,14 @@ The app icon is an independent ring-and-dot mark. The animated circle is a
 gameplay preview, not a logo. Existing executable/config identifiers retain
 `OsuHue` for compatibility. Reviewed against:
 https://osu.ppy.sh/wiki/en/Brand_identity_guidelines
+
+## Ruleset effects
+
+The active ruleset is part of the map cache identity. Native Taiko and Mania
+load the raw beatmap endpoint even when a timeline API exists: hit sounds
+and X coordinates are needed for Don/Kat and column mapping. The upstream
+tosu API contribution stays generic and unchanged. Catch uses the existing
+combo progression for fruit/juice-stream heads. Nested objects are not
+synthesised. Mania groups simultaneous notes once during loading and mixes
+their column accents during rendering. This adds no map scan to the 50-Hz loop.
+Unsupported conversions fail closed instead of reusing the source map's mode.

@@ -10,9 +10,17 @@ public readonly record struct Rgb(byte R, byte G, byte B)
     public static readonly Rgb Black = new(0, 0, 0);
 }
 
-public sealed record HitCue(double Time, int ColourIndex, int SkinColourIndex = -1);
+public sealed record HitCue(double Time, int ColourIndex, int SkinColourIndex = -1)
+{
+    public int[]? SimultaneousColours
+    {
+        get; init;
+    }
+}
 public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colours)
 {
+    public int Keys { get; init; } = 4;
+
     // osu! classic's fallback palette. Custom skin/beatmap palettes take precedence.
     public static readonly Rgb[] DefaultColours = [new(255, 192, 0), new(0, 202, 0), new(18, 124, 255), new(242, 24, 57)];
 
@@ -39,13 +47,14 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
         return colours.Values.ToArray();
     }
 
-    public static Beatmap Parse(string text)
+    public static Beatmap Parse(string text, int? playMode = null)
     {
         if (!text.TrimStart('\uFEFF', ' ', '\r', '\n').StartsWith("osu file format v", StringComparison.Ordinal))
             throw new FormatException("Die Antwort ist keine osu!-Beatmap.");
         var section = "";
         string title = "Beatmap", artist = "", difficulty = "";
-        int mode = 0, version = 14;
+        int mode = 0, version = 14, keys = 5;
+        var records = new List<string[]>();
         var rawObjects = new List<(double time, int type)>();
         var breaks = new List<double>();
         foreach (var raw in text.Split('\n'))
@@ -65,7 +74,10 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
                 var parts = line.Split(',');
                 if (parts.Length >= 5 && double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double time)
                     && double.IsFinite(time) && int.TryParse(parts[3], out int type))
+                {
                     rawObjects.Add((time, type));
+                    records.Add(parts);
+                }
                 else
                     throw new FormatException("Die Beatmap enthält ein ungültiges Hitobject.");
             }
@@ -84,6 +96,8 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
                 var value = line[(colon + 1)..].Trim();
                 if (section == "[General]" && key == "Mode")
                     int.TryParse(value, out mode);
+                if (section == "[Difficulty]" && key == "CircleSize" && double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double cs) && double.IsFinite(cs))
+                    keys = (int)Math.Clamp(Math.Round(cs), 0, 19);
                 if (section == "[Metadata]")
                 {
                     if (key == "Title")
@@ -97,7 +111,18 @@ public sealed record Beatmap(string Title, int Mode, HitCue[] Hits, Rgb[] Colour
         }
         if (rawObjects.Count == 0)
             throw new FormatException("Die Beatmap enthält keine Hitobjects.");
-        return new($"{artist} — {title} [{difficulty}]", mode, BuildCues(rawObjects, breaks, version), ReadColours(text));
+        if (version <= 0 || mode is < 0 or > 3)
+            throw new FormatException("Ungültige Beatmap-Version oder ungültiger Spielmodus.");
+        int target = playMode ?? mode;
+        if (target != mode && !(mode == 0 && target == 2))
+            throw new FormatException("Diese Modus-Konvertierung wird noch nicht unterstützt. Wähle eine native Map für den Spielmodus.");
+        if (target == 3 && keys > 10)
+            keys = keys / 2 * 2;
+        var cues = target is 1 or 3 ? RulesetEffects.BuildCues(records, target, keys, version) : BuildCues(rawObjects, breaks, version);
+        return new($"{artist} — {title} [{difficulty}]", target, cues, ReadColours(text))
+        {
+            Keys = keys
+        };
     }
 
     public static Beatmap FromTimeline(JsonElement root, string title)
@@ -178,6 +203,19 @@ public sealed record Pulse(Rgb Colour, double Brightness, int HitIndex)
         double age = (mapTime + offset * rate - map.Hits[i].Time) / rate;
         double level = Math.Exp(-age / Math.Clamp(fade, 40, 1000));
         int index = !useMapOffsets && map.Hits[i].SkinColourIndex >= 0 ? map.Hits[i].SkinColourIndex : map.Hits[i].ColourIndex;
-        return new(palette[index % palette.Length], level < 0.008 ? 0 : level * Math.Clamp(maximum, 0, 1), i);
+        var colour = palette[index % palette.Length];
+        if (map.Hits[i].SimultaneousColours is { Length: > 1 } chord)
+        {
+            int r = 0, g = 0, b = 0;
+            foreach (int component in chord)
+            {
+                var part = palette[component % palette.Length];
+                r += part.R;
+                g += part.G;
+                b += part.B;
+            }
+            colour = new((byte)(r / chord.Length), (byte)(g / chord.Length), (byte)(b / chord.Length));
+        }
+        return new(colour, level < 0.008 ? 0 : level * Math.Clamp(maximum, 0, 1), i);
     }
 }

@@ -11,6 +11,10 @@ namespace OsuHue;
 public sealed record TosuFrame(string MapKey, double Time, double Rate, bool Playing, bool Paused, string Client, bool IgnoreMapColours, string SkinName, long ReceivedAt)
 {
     public string Checksum { get; init; } = "";
+    public int Mode
+    {
+        get; init;
+    }
     public string Title { get; init; } = "Beatmap";
     public double Age => Stopwatch.GetElapsedTime(ReceivedAt).TotalMilliseconds;
     public double CurrentTime => Time + (Paused ? 0 : Math.Min(Age, 200) * Rate);
@@ -176,12 +180,13 @@ public sealed class TosuClient : IAsyncDisposable
         string client = Text(root, "client");
         string installation = Text(root, "folders", "game");
         string skinPath = Text(root, "folders", "skin");
-        string key = $"{checksum}|{path}|{skin}|{ignore}|{client}|{installation}|{skinPath}|{generation}";
         int state = (int)Number(root, "state", "number");
-        bool standard = Number(root, "play", "mode", "number") == 0 && Number(root, "beatmap", "mode", "number") == 0;
-        return new(key, Number(root, "beatmap", "time", "live"), rate, state == 2 && standard, Flag(root, "game", "paused"), Text(root, "client"), ignore, skin, Stopwatch.GetTimestamp())
+        int mode = (int)Number(root, state == 2 ? "play" : "beatmap", "mode", "number");
+        string key = $"{mode}|{checksum}|{path}|{skin}|{ignore}|{client}|{installation}|{skinPath}|{generation}";
+        return new(key, Number(root, "beatmap", "time", "live"), rate, state == 2 && mode is >= 0 and <= 3, Flag(root, "game", "paused"), Text(root, "client"), ignore, skin, Stopwatch.GetTimestamp())
         {
             Checksum = checksum,
+            Mode = mode,
             Title = $"{Text(root, "beatmap", "artist")} — {Text(root, "beatmap", "title")} [{Text(root, "beatmap", "version")}]"
         };
     }
@@ -191,7 +196,10 @@ public sealed class TosuClient : IAsyncDisposable
         try
         {
             Beatmap map;
-            using (var response = await GetLocalAsync(uri, "api/v2/beatmap/timeline", cancel))
+            // Non-standard rulesets need coordinates and hit sounds absent from the generic timeline.
+            using (var response = requested.Mode == 0
+                ? await GetLocalAsync(uri, "api/v2/beatmap/timeline", cancel)
+                : new HttpResponseMessage(System.Net.HttpStatusCode.NotFound))
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
@@ -201,7 +209,7 @@ public sealed class TosuClient : IAsyncDisposable
                     if (requested.Checksum.Length == 32 && requested.Checksum.All(Uri.IsHexDigit)
                         && !Convert.ToHexString(MD5.HashData(bytes)).Equals(requested.Checksum, StringComparison.OrdinalIgnoreCase))
                         throw new IOException("Die Map wurde während des Ladens gewechselt.");
-                    map = Beatmap.Parse(Encoding.UTF8.GetString(bytes));
+                    map = Beatmap.Parse(Encoding.UTF8.GetString(bytes), requested.Mode);
                 }
                 else
                 {
@@ -210,23 +218,34 @@ public sealed class TosuClient : IAsyncDisposable
                     if (json.RootElement.GetProperty("checksum").GetString() != requested.Checksum)
                         throw new IOException("Die Map wurde während des Ladens gewechselt.");
                     map = Beatmap.FromTimeline(json.RootElement, requested.Title);
+                    if (map.Mode != requested.Mode)
+                        throw new IOException("Der Spielmodus wurde während des Ladens gewechselt.");
                 }
             }
             string skinText = "";
-            if (!string.IsNullOrWhiteSpace(file))
-                skinText = await File.ReadAllTextAsync(file, cancel);
-            else if (!requested.Client.Equals("lazer", StringComparison.OrdinalIgnoreCase))
+            if (requested.Mode is 0 or 2)
             {
-                try
+                if (!string.IsNullOrWhiteSpace(file))
+                    skinText = await File.ReadAllTextAsync(file, cancel);
+                else if (!requested.Client.Equals("lazer", StringComparison.OrdinalIgnoreCase))
                 {
-                    using var skinResponse = await GetLocalAsync(uri, "files/skin/skin.ini", cancel);
-                    skinResponse.EnsureSuccessStatusCode();
-                    skinText = await skinResponse.Content.ReadAsStringAsync(cancel);
+                    try
+                    {
+                        using var skinResponse = await GetLocalAsync(uri, "files/skin/skin.ini", cancel);
+                        skinResponse.EnsureSuccessStatusCode();
+                        skinText = await skinResponse.Content.ReadAsStringAsync(cancel);
+                    }
+                    catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException) { }
                 }
-                catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException) { }
             }
             var skinPalette = Beatmap.ReadColours(skinText);
+            if (skinPalette.Length == 0 && string.IsNullOrWhiteSpace(file))
+                skinPalette = RulesetEffects.BuiltInComboColours(requested.Client, requested.SkinName);
             var (palette, source) = SelectPalette(map.Colours, skinPalette, requested.IgnoreMapColours, mode);
+            if (map.Mode == 1)
+                (palette, source) = ([new(235, 69, 44), new(67, 142, 172)], "Taiko · Don/Kat-Lichtpalette");
+            else if (map.Mode == 3)
+                (palette, source) = (RulesetEffects.ManiaColours(map.Keys, requested.Client == "lazer" && RulesetEffects.IsArgon(requested.SkinName)), $"Mania · {map.Keys}K-Spaltenakzente · keine Texturfarben");
             // A map/skin switch while the HTTP requests were running invalidates this result.
             if (!cancel.IsCancellationRequested && Frame?.MapKey == requested.MapKey)
                 loaded = new(requested.MapKey, map, palette, source, ReferenceEquals(palette, map.Colours));

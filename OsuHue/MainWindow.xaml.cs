@@ -39,7 +39,7 @@ public partial class MainWindow : Window
             "Beatmap" => 2,
             _ => 0
         };
-        SkinLabel.Text = settings.SkinFile.Length == 0 ? "Aktueller Skin wird automatisch gelesen." : settings.SkinFile;
+        SkinLabel.Text = settings.SkinFile.Length == 0 ? "osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette." : settings.SkinFile;
         BridgeStatus.Text = pairedIp.Length > 0 ? "Kopplung gespeichert · Bereich wird geladen" : "Noch nicht gekoppelt";
         ready = true;
         if (settings.LoadWarning is string warning)
@@ -90,6 +90,9 @@ public partial class MainWindow : Window
     private void UpdateControls()
     {
         bool streaming = engine.IsStreaming;
+        bool comboPalette = engine.Tosu.Frame?.Mode is not (1 or 3);
+        ColourMode.IsEnabled = SkinFileButton.IsEnabled = ClearSkinButton.IsEnabled = comboPalette && !busy;
+        ColourMode.ToolTip = comboPalette ? "Combo-Farben für osu! und Catch" : "Taiko und Mania verwenden eine eigene Moduspalette.";
         DiscoverButton.IsEnabled = PairButton.IsEnabled = RefreshAreasButton.IsEnabled = BridgeIp.IsEnabled = AreaBox.IsEnabled = !busy && !streaming;
         InstallButton.IsEnabled = ReconnectButton.IsEnabled = TosuUrl.IsEnabled = !busy && !streaming;
         DemoButton.IsEnabled = !busy && (!streaming || engine.Demo);
@@ -179,9 +182,9 @@ public partial class MainWindow : Window
             return;
         }
         if (engine.Tosu.Frame is not { Age: < 500 })
-            throw new InvalidOperationException("Starte zuerst tosu und osu! stable. Eine gekoppelte Bridge allein reicht noch nicht.");
+            throw new InvalidOperationException("Starte zuerst tosu und osu! stable oder lazer. Eine gekoppelte Bridge allein reicht noch nicht.");
         await engine.StartAsync(CreateHueSession());
-        Notice.Text = "Licht-Sync aktiv. Starte eine osu!standard-Map. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.";
+        Notice.Text = "Licht-Sync aktiv. Starte eine native Map im gewählten Spielmodus. Zum Zurücksetzen auf „Licht-Sync stoppen“ klicken.";
     });
 
     private HueSession CreateHueSession()
@@ -261,7 +264,7 @@ public partial class MainWindow : Window
     private void ClearSkin_Click(object sender, RoutedEventArgs e)
     {
         settings.SkinFile = "";
-        SkinLabel.Text = "Aktueller Skin wird automatisch gelesen.";
+        SkinLabel.Text = "osu!/Catch: Skin automatisch; Mania/Taiko: Moduspalette.";
         UpdatePalette();
     }
 

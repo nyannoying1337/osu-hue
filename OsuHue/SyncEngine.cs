@@ -136,7 +136,7 @@ public sealed class SyncEngine : IAsyncDisposable
             {
                 bool fresh = frame is { Age: < 500 };
                 bool matched = fresh && loaded is not null && frame!.MapKey == loaded.Key;
-                bool playing = matched && frame!.Playing && !frame.Paused && loaded!.Map.Mode == 0;
+                bool playing = matched && frame!.Playing && !frame.Paused && loaded!.Map.Mode == frame.Mode;
                 if (playing)
                     pulse = Pulse.At(loaded!.Map, loaded.Palette, frame!.CurrentTime, frame.Rate, settings.Offset, settings.Fade, settings.Brightness, loaded.UseMapOffsets);
                 var state = GetPlayStatus(frame, loaded, fresh, matched);
@@ -182,11 +182,9 @@ public sealed class SyncEngine : IAsyncDisposable
             return Tosu.Status;
         if (frame.Paused && frame.Playing)
             return "Pausiert · Lichtimpulse angehalten";
-        if (loaded?.Map.Mode is > 0)
-            return "Diese Version unterstützt osu!standard.";
         if (!frame.Playing)
             return "Warte auf den Map-Start";
-        return matched ? "Spielt · Impulse folgen der Beatmap" : "Beatmap wird geladen …";
+        return matched ? $"{RulesetEffects.Name(loaded!.Map.Mode)} · Objektanfänge · keine Ticks/Verläufe" : "Beatmap wird geladen …";
     }
 
     public ValueTask DisposeAsync()
